@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<JUCERPROJECT id="ZGgLh4" name="PapaPan" projectType="audioplug" useAppConfig="0"
+              addUsingNamespaceToJuceHeader="0" jucerFormatVersion="1" companyName="Hamlet inc."
+              pluginFormats="buildStandalone,buildVST3" pluginVST3Category="Modulation">
+  <MAINGROUP id="huGugp" name="PapaPan">
+    <GROUP id="{D123069D-D6DE-E47E-F810-D8810F3C870B}" name="Source">
+      <GROUP id="{CEAD9F3B-0B30-878B-8DB8-EE6DB06EDE67}" name="Controls">
+        <FILE id="zvQYMj" name="ControlComponent.cpp" compile="1" resource="0"
+              file="Source/ControlComponent.cpp"/>
+        <FILE id="MNfYYq" name="ControlComponent.h" compile="0" resource="0"
+              file="Source/ControlComponent.h"/>
+        <FILE id="tZE6KZ" name="LFOComponent.cpp" compile="1" resource="0"
+              file="Source/LFOComponent.cpp"/>
+        <FILE id="zXbVIq" name="LFOComponent.h" compile="0" resource="0" file="Source/LFOComponent.h"/>
+        <FILE id="gp6EFh" name="MasterComponent.cpp" compile="1" resource="0"
+              file="Source/MasterComponent.cpp"/>
+        <FILE id="OS6uxJ" name="MasterComponent.h" compile="0" resource="0"
+              file="Source/MasterComponent.h"/>
+        <FILE id="LSxxQG" name="MidiComponent.cpp" compile="1" resource="0"
+              file="Source/MidiComponent.cpp"/>
+        <FILE id="LMeQM6" name="MidiComponent.h" compile="0" resource="0" file="Source/MidiComponent.h"/>
+        <FILE id="Y5lLJP" name="SliderComponent.cpp" compile="1" resource="0"
+              file="Source/SliderComponent.cpp"/>
+        <FILE id="PLDHMr" name="SliderComponent.h" compile="0" resource="0"
+              file="Source/SliderComponent.h"/>
+      </GROUP>
+      <FILE id="ONivRy" name="BasePanel.cpp" compile="1" resource="0" file="Source/BasePanel.cpp"/>
+      <FILE id="H3DuGR" name="BasePanel.h" compile="0" resource="0" file="Source/BasePanel.h"/>
+      <FILE id="yg2dHJ" name="BaseColours.h" compile="0" resource="0" file="Source/BaseColours.h"/>
+      <FILE id="NAj3Gz" name="PluginProcessor.cpp" compile="1" resource="0"
+            file="Source/PluginProcessor.cpp"/>
+      <FILE id="HBASrb" name="PluginProcessor.h" compile="0" resource="0"
+            file="Source/PluginProcessor.h"/>
+      <FILE id="Q4qfSJ" name="PluginEditor.cpp" compile="1" resource="0"
+            file="Source/PluginEditor.cpp"/>
+      <FILE id="MUL44A" name="PluginEditor.h" compile="0" resource="0" file="Source/PluginEditor.h"/>
+      <FILE id="h2Tuxa" name="Panner.cpp" compile="1" resource="0" file="Source/Panner.cpp"/>
+      <FILE id="Uq5aGt" name="Panner.h" compile="0" resource="0" file="Source/Panner.h"/>
+      <FILE id="EbxiAv" name="PitchDetector.cpp" compile="1" resource="0"
+            file="Source/PitchDetector.cpp"/>
+      <FILE id="bk5L2f" name="PitchDetector.h" compile="0" resource="0" file="Source/PitchDetector.h"/>
+      <FILE id="GoVJKT" name="Comic Sans MS Bold.ttf" compile="0" resource="1"
+            file="Resources/Comic Sans MS Bold.ttf"/>
+      <FILE id="hkSgOj" name="Utils.cpp" compile="1" resource="0" file="Source/Utils.cpp"/>
+      <FILE id="cx5D0q" name="Utils.h" compile="0" resource="0" file="Source/Utils.h"/>
+    </GROUP>
+  </MAINGROUP>
+  <MODULES>
+    <MODULE id="juce_audio_basics" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_audio_devices" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_audio_formats" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_audio_plugin_client" showAllCode="1" useLocalCopy="0"
+            useGlobalPath="1"/>
+    <MODULE id="juce_audio_processors" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_audio_utils" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_core" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_data_structures" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_dsp" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_events" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_graphics" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_gui_basics" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_gui_extra" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+  </MODULES>
+  <JUCEOPTIONS JUCE_STRICT_REFCOUNTEDPOINTER="1" JUCE_VST3_CAN_REPLACE_VST2="0"/>
+  <EXPORTFORMATS>
+    <XCODE_MAC targetFolder="Builds/MacOSX">
+      <CONFIGURATIONS>
+        <CONFIGURATION isDebug="1" name="Debug" targetName="PanCake"/>
+        <CONFIGURATION isDebug="0" name="Release" targetName="PanCake"/>
+      </CONFIGURATIONS>
+      <MODULEPATHS>
+        <MODULEPATH id="juce_audio_basics" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_audio_devices" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_audio_formats" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_audio_plugin_client" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_audio_processors" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_audio_utils" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_core" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_data_structures" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_dsp" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_events" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_graphics" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_gui_basics" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_gui_extra" path="../../JUCE/modules"/>
+      </MODULEPATHS>
+    </XCODE_MAC>
+  </EXPORTFORMATS>
+</JUCERPROJECT>

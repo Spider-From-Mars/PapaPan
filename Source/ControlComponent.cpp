@@ -1,0 +1,185 @@
+#include <JuceHeader.h>
+#include "ControlComponent.h"
+#include "BaseColours.h"
+
+//==============================================================================
+ControlComponent::ControlComponent()
+{
+    
+}
+
+ControlComponent::~ControlComponent()
+{
+}
+
+void ControlComponent::paint (juce::Graphics& g)
+{
+    auto bounds = getLocalBounds().toFloat();
+    g.setColour(BaseColours::darkPink);
+    g.fillRoundedRectangle(bounds, 10);
+    
+    g.setColour(BaseColours::white);
+    auto line = juce::Rectangle<float>(bounds.getRight() - 25, bounds.getY(), 1.5, bounds.getHeight());
+    g.fillRect(line);
+}
+
+void ControlComponent::resized()
+{
+    
+}
+
+void ControlComponent::setRotatedLabel(juce::Graphics& g, juce::String title)
+{
+    juce::Graphics::ScopedSaveState state(g);
+    
+    auto localBounds = getLocalBounds().toFloat();
+    
+    float pad = 25 / 2;
+    float deltaX = localBounds.getWidth() / 2 - pad;
+    g.addTransform(
+        juce::AffineTransform::rotation(
+                                        juce::MathConstants<float>::halfPi,
+                                        localBounds.getCentre().getX(),
+                                        localBounds.getCentre().getY()
+                                    ).translated(deltaX, 0)
+    );
+    
+    juce::FontOptions comicSansOptions {
+        typeface->getName(),
+        19,
+        juce::Font::bold
+    };
+    
+    g.setColour(BaseColours::white);
+    g.setFont(juce::Font(comicSansOptions));
+    g.drawText(
+        title,
+        localBounds,
+        juce::Justification::centred,
+        true
+    );
+}
+
+
+
+
+// RotarySliderWithLabels
+//==============================================================================
+
+void LookAndFeel::drawRotarySlider(juce::Graphics& g,
+                                   int x, int y, int width, int height,
+                                   float sliderPosProportional,
+                                   float rotaryStartAngle,
+                                   float rotaryEndAngle,
+                                   juce::Slider& slider)
+{
+    using namespace juce;
+    
+    auto bounds = Rectangle<float>(x, y, width, height);
+    
+    g.setColour(BaseColours::basePink);
+    g.fillEllipse(bounds);
+    
+    g.setColour(BaseColours::white);
+    g.drawEllipse(bounds, 2);
+    
+    if (auto* rswl = dynamic_cast<RotarySliderWithLabels*>(&slider))
+    {
+        auto center = bounds.getCentre();
+        
+        Path p;
+        
+        Rectangle<float> r;
+        r.setLeft(center.getX() - 2);
+        r.setRight(center.getX() + 2);
+        r.setTop(bounds.getY());
+        r.setBottom(center.getY());
+        
+        p.addRectangle(r);
+        
+        jassert(rotaryStartAngle < rotaryEndAngle);
+        
+        auto sliderAngRad = jmap(sliderPosProportional,
+                                 0.f,
+                                 1.f,
+                                 rotaryStartAngle,
+                                 rotaryEndAngle);
+        
+        p.applyTransform(AffineTransform().rotated(sliderAngRad, center.getX(), center.getY()));
+        
+        g.fillPath(p);
+        
+        juce::FontOptions comicSansOptions {
+            typeface->getName(),
+            15,
+            juce::Font::bold
+        };
+        auto font = juce::Font(comicSansOptions);
+        
+        g.setColour(BaseColours::white);
+        
+        const float maxLineWidth = getMaxLineWidth(rswl->getDisplayString(), font);
+        juce::GlyphArrangement ga;
+        ga.addJustifiedText(
+                            juce::Font(font),
+                            rswl->getDisplayString(),
+                            bounds.getCentre().getX() - maxLineWidth / 2,
+                            bounds.getBottom() + comicSansOptions.getHeight(),
+                            maxLineWidth,
+                            juce::Justification::centred
+                        );
+        ga.draw(g);
+    }
+}
+
+void RotarySliderWithLabels::paint(juce::Graphics &g)
+{
+    using namespace juce;
+    
+    auto startAng = degreesToRadians(180.f + 45.f);
+    auto endAng = degreesToRadians(180.f - 45.f) + MathConstants<float>::twoPi;
+    
+    auto range = getRange();
+    
+    auto sliderBounds = getSliderBounds();
+    
+    getLookAndFeel().drawRotarySlider(g,
+                                      sliderBounds.getX(),
+                                      sliderBounds.getY(),
+                                      sliderBounds.getWidth(),
+                                      sliderBounds.getHeight(),
+                                      jmap(getValue(), range.getStart(), range.getEnd(), 0.0, 1.0),
+                                      startAng,
+                                      endAng,
+                                      *this);
+}
+
+juce::Rectangle<int> RotarySliderWithLabels::getSliderBounds() const
+{
+    auto bounds = getLocalBounds();
+    
+    auto size = juce::jmin(bounds.getWidth(), bounds.getHeight());
+    size -= size * 0.5;
+    juce::Rectangle<int> r;
+    r.setSize(size, size);
+    r.setCentre(bounds.getCentreX(), bounds.getCentreY() - 10);
+    
+    return r;
+}
+
+
+juce::String RotarySliderWithLabels::getDisplayString() const
+{
+    juce::String str;
+    
+    if (auto* floatParam = dynamic_cast<juce::AudioParameterFloat*>(param))
+    {
+        str << param->name.toUpperCase() << "\n" << getValue() << suffix;
+    }
+    else
+    {
+        jassertfalse;
+    }
+    
+    return str;
+}
