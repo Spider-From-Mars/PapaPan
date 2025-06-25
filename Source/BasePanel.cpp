@@ -3,7 +3,9 @@
 #include "Utils.h"
 
 //==============================================================================
-BasePanel::BasePanel(juce::AudioProcessorValueTreeState& apvts) : masterComponent(apvts)
+BasePanel::BasePanel(juce::AudioProcessorValueTreeState& apvts) :
+        lfoComponent(apvts),
+        masterComponent(apvts)
 {
     setMainStyleLabel(titleLabel, 25);
     

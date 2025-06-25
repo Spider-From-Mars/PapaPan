@@ -43,6 +43,8 @@ public:
                           ) override;
     
 private:
+    void drawRotarySliderLabel(juce::Graphics& g, juce::Rectangle<float> bounds, const juce::String& displayString);
+    
     juce::Typeface::Ptr typeface = juce::Typeface::createSystemTypefaceFor(
                                                                            BinaryData::Comic_Sans_MS_Bold_ttf,
                                                                            BinaryData::Comic_Sans_MS_Bold_ttfSize
@@ -66,6 +68,7 @@ public:
     }
     
     void paint(juce::Graphics& g) override;
+    bool hitTest(int x, int y) override;
     juce::Rectangle<int> getSliderBounds() const;
     juce::String getDisplayString() const;
     

@@ -9,7 +9,7 @@
 class LFOComponent  : public ControlComponent
 {
 public:
-    LFOComponent();
+    LFOComponent(juce::AudioProcessorValueTreeState& apvts);
     ~LFOComponent() override;
 
     void paint (juce::Graphics&) override;
@@ -17,4 +17,8 @@ public:
 
 private:
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (LFOComponent)
+    
+    RotarySliderWithLabels lfoSlider;
+    
+    juce::AudioProcessorValueTreeState::SliderAttachment lfoSliderAttachment;
 };

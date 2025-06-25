@@ -77,22 +77,38 @@ void LookAndFeel::drawRotarySlider(juce::Graphics& g,
     
     auto bounds = Rectangle<float>(x, y, width, height);
     
+    Path p;
+    auto center = bounds.getCentre();
+    
+    const float borderThickness = 5.f;
+    const auto arcRadius = bounds.getHeight() / 2;
+    
+    p.addCentredArc(
+                    center.getX(),
+                    center.getY(),
+                    arcRadius,
+                    arcRadius,
+                    0.0f,
+                    rotaryStartAngle,
+                    rotaryEndAngle,
+                    true);
+    g.setColour(BaseColours::yellow);
+    g.strokePath(p, juce::PathStrokeType(borderThickness, PathStrokeType::curved, PathStrokeType::rounded));
+    
     g.setColour(BaseColours::basePink);
-    g.fillEllipse(bounds);
+    g.fillEllipse(bounds.reduced(borderThickness));
     
     g.setColour(BaseColours::white);
-    g.drawEllipse(bounds, 2);
+    g.drawEllipse(bounds.reduced(borderThickness), 5);
     
     if (auto* rswl = dynamic_cast<RotarySliderWithLabels*>(&slider))
     {
-        auto center = bounds.getCentre();
-        
-        Path p;
+        p.clear();
         
         Rectangle<float> r;
         r.setLeft(center.getX() - 2);
         r.setRight(center.getX() + 2);
-        r.setTop(bounds.getY());
+        r.setTop(bounds.reduced(borderThickness).getY());
         r.setBottom(center.getY());
         
         p.addRectangle(r);
@@ -107,29 +123,38 @@ void LookAndFeel::drawRotarySlider(juce::Graphics& g,
         
         p.applyTransform(AffineTransform().rotated(sliderAngRad, center.getX(), center.getY()));
         
+        g.setColour(BaseColours::white);
         g.fillPath(p);
         
-        juce::FontOptions comicSansOptions {
-            typeface->getName(),
-            15,
-            juce::Font::bold
-        };
-        auto font = juce::Font(comicSansOptions);
-        
-        g.setColour(BaseColours::white);
-        
-        const float maxLineWidth = getMaxLineWidth(rswl->getDisplayString(), font);
-        juce::GlyphArrangement ga;
-        ga.addJustifiedText(
-                            juce::Font(font),
-                            rswl->getDisplayString(),
-                            bounds.getCentre().getX() - maxLineWidth / 2,
-                            bounds.getBottom() + comicSansOptions.getHeight(),
-                            maxLineWidth,
-                            juce::Justification::centred
-                        );
-        ga.draw(g);
+        drawRotarySliderLabel(g, bounds, rswl->getDisplayString());
     }
+}
+
+
+void LookAndFeel::drawRotarySliderLabel(juce::Graphics& g, juce::Rectangle<float> bounds, const juce::String& displayString)
+{
+    juce::Graphics::ScopedSaveState state(g);
+    
+    juce::FontOptions comicSansOptions {
+        typeface->getName(),
+        15,
+        juce::Font::bold
+    };
+    auto font = juce::Font(comicSansOptions);
+    
+    g.setColour(BaseColours::white);
+    
+    const float maxLineWidth = bounds.getWidth();
+    juce::GlyphArrangement ga;
+    ga.addJustifiedText(
+                        juce::Font(font),
+                        displayString,
+                        bounds.getCentre().getX() - maxLineWidth / 2,
+                        bounds.getBottom() + comicSansOptions.getHeight(),
+                        maxLineWidth,
+                        juce::Justification::centred
+                    );
+    ga.draw(g);
 }
 
 void RotarySliderWithLabels::paint(juce::Graphics &g)
@@ -162,11 +187,19 @@ juce::Rectangle<int> RotarySliderWithLabels::getSliderBounds() const
     size -= size * 0.5;
     juce::Rectangle<int> r;
     r.setSize(size, size);
-    r.setCentre(bounds.getCentreX(), bounds.getCentreY() - 10);
+    r.setCentre(bounds.getCentreX(), bounds.getCentreY() - 15);
     
     return r;
 }
 
+bool RotarySliderWithLabels::hitTest(int x, int y)
+{
+    juce::Point<float> mousePos(x, y);
+    juce::Point<float> center = getSliderBounds().getCentre().toFloat();
+    float radius = getSliderBounds().getWidth() / 2;
+
+    return mousePos.getDistanceFrom(center) <= radius;
+}
 
 juce::String RotarySliderWithLabels::getDisplayString() const
 {

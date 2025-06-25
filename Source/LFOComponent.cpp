@@ -2,9 +2,11 @@
 #include "LFOComponent.h"
 
 //==============================================================================
-LFOComponent::LFOComponent()
+LFOComponent::LFOComponent(juce::AudioProcessorValueTreeState& apvts) :
+        lfoSlider(*apvts.getParameter("HERTZRATE"), "HZ"),
+        lfoSliderAttachment(apvts, "HERTZRATE", lfoSlider)
 {
-
+    addAndMakeVisible(lfoSlider);
 }
 
 LFOComponent::~LFOComponent()
@@ -19,5 +21,5 @@ void LFOComponent::paint (juce::Graphics& g)
 
 void LFOComponent::resized()
 {
-    
+    lfoSlider.setBounds(getLocalBounds());
 }
