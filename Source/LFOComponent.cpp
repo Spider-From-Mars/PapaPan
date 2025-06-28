@@ -21,5 +21,11 @@ void LFOComponent::paint (juce::Graphics& g)
 
 void LFOComponent::resized()
 {
-    lfoSlider.setBounds(getLocalBounds());
+    auto bounds = getLocalBounds();
+    float sliderWidth = (bounds.getWidth() - getrotatedLabelHeight()) / 2;
+    lfoSlider.setBounds(
+                        bounds
+                        .withTrimmedRight(getrotatedLabelHeight())
+                        .removeFromRight(sliderWidth)
+                    );
 }

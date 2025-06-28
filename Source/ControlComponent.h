@@ -15,6 +15,7 @@ public:
     void paint (juce::Graphics&) override;
     void resized() override;
     void setRotatedLabel(juce::Graphics& g, juce::String title);
+    int getrotatedLabelHeight() const {return rotatedLabelHeight;}
 
 private:
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ControlComponent)
@@ -23,6 +24,8 @@ private:
                                                                            BinaryData::Comic_Sans_MS_Bold_ttf,
                                                                            BinaryData::Comic_Sans_MS_Bold_ttfSize
                                                                            );
+    
+    const int rotatedLabelHeight = 25;
 
 };
 

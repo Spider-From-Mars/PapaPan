@@ -34,7 +34,7 @@ void ControlComponent::setRotatedLabel(juce::Graphics& g, juce::String title)
     
     auto localBounds = getLocalBounds().toFloat();
     
-    float pad = 25 / 2;
+    float pad = rotatedLabelHeight / 2;
     float deltaX = localBounds.getWidth() / 2 - pad;
     g.addTransform(
         juce::AffineTransform::rotation(
@@ -144,10 +144,10 @@ void LookAndFeel::drawRotarySliderLabel(juce::Graphics& g, juce::Rectangle<float
     
     g.setColour(BaseColours::white);
     
-    const float maxLineWidth = bounds.getWidth();
+    const float maxLineWidth = getMaxLineWidth(displayString, font);
     juce::GlyphArrangement ga;
     ga.addJustifiedText(
-                        juce::Font(font),
+                        font,
                         displayString,
                         bounds.getCentre().getX() - maxLineWidth / 2,
                         bounds.getBottom() + comicSansOptions.getHeight(),

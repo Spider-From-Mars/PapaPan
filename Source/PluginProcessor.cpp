@@ -216,10 +216,9 @@ juce::AudioProcessorValueTreeState::ParameterLayout PanCakeAudioProcessor::creat
                                                             ));
     
     layout.add(std::make_unique<juce::AudioParameterFloat>(ParameterID("HERTZRATE", 1),
-                                                         "Hertz Rate",
-                                                         0,
-                                                         100,
-                                                         2));
+                                                           "Speed",
+                                                           juce::NormalisableRange<float>(0.f, 100.f, 0.01f, 0.4f),
+                                                           0));
     
     juce::StringArray modeChoices = {"Hertz Synced", "Beat Synced"};
     layout.add(std::make_unique<juce::AudioParameterChoice>(ParameterID("MODE", 1),
