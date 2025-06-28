@@ -3,9 +3,10 @@
 
 //==============================================================================
 MasterComponent::MasterComponent(juce::AudioProcessorValueTreeState& apvts) :
-        mixSlider(*apvts.getParameter("MIX"), "%"),
-        mixSliderAttachment(apvts, "MIX", mixSlider)
+        mixSlider(*apvts.getParameter("MIX"), "%")
 {
+    mixSliderAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(apvts, "MIX", mixSlider);
+    
     addAndMakeVisible(mixSlider);
     
 }

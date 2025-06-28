@@ -20,5 +20,5 @@ private:
     
     RotarySliderWithLabels mixSlider;
     
-    juce::AudioProcessorValueTreeState::SliderAttachment mixSliderAttachment;
+    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> mixSliderAttachment;
 };

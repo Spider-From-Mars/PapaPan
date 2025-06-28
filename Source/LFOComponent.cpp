@@ -3,9 +3,10 @@
 
 //==============================================================================
 LFOComponent::LFOComponent(juce::AudioProcessorValueTreeState& apvts) :
-        lfoSlider(*apvts.getParameter("HERTZRATE"), "HZ"),
-        lfoSliderAttachment(apvts, "HERTZRATE", lfoSlider)
+        lfoSlider(*apvts.getParameter("HERTZRATE"), "HZ")
 {
+    lfoSliderAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(apvts, "HERTZRATE", lfoSlider);
+    
     addAndMakeVisible(lfoSlider);
 }
 

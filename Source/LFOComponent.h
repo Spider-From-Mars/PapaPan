@@ -20,5 +20,5 @@ private:
     
     RotarySliderWithLabels lfoSlider;
     
-    juce::AudioProcessorValueTreeState::SliderAttachment lfoSliderAttachment;
+    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> lfoSliderAttachment;
 };
