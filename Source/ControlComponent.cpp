@@ -5,7 +5,7 @@
 //==============================================================================
 ControlComponent::ControlComponent()
 {
-    
+
 }
 
 ControlComponent::~ControlComponent()
@@ -61,9 +61,7 @@ void ControlComponent::setRotatedLabel(juce::Graphics& g, juce::String title)
 }
 
 
-
-
-// RotarySliderWithLabels
+// RotarySlider LookAndFeel
 //==============================================================================
 
 void LookAndFeel::drawRotarySlider(juce::Graphics& g,
@@ -157,6 +155,10 @@ void LookAndFeel::drawRotarySliderLabel(juce::Graphics& g, juce::Rectangle<float
     ga.draw(g);
 }
 
+
+// RotarySliderWithLabels
+//==============================================================================
+
 void RotarySliderWithLabels::paint(juce::Graphics &g)
 {
     using namespace juce;
@@ -215,4 +217,48 @@ juce::String RotarySliderWithLabels::getDisplayString() const
     }
     
     return str;
+}
+
+// DropdownMenu LookAndFeel
+//==============================================================================
+void LookAndFeel::drawComboBox(juce::Graphics& g,
+                               int width, int height,
+                               bool isButtonDown, int buttonX, int buttonY, int buttonW, int buttonH,
+                               juce::ComboBox& box
+                               )
+{
+    g.fillAll(juce::Colours::transparentBlack);
+}
+
+juce::Font LookAndFeel::getComboBoxFont(juce::ComboBox& box)
+{
+    juce::FontOptions comicSansOptions {
+        typeface->getName(),
+        17,
+        juce::Font::bold
+    };
+    
+    return juce::Font(comicSansOptions);
+}
+
+void LookAndFeel::positionComboBoxText(juce::ComboBox& box, juce::Label& label)
+{
+    label.setBounds(box.getLocalBounds());
+    label.setFont(getComboBoxFont(box));
+    label.setJustificationType(juce::Justification::right);
+    label.setColour(juce::Label::textColourId, juce::Colours::white);
+    label.setColour(juce::Label::backgroundColourId, juce::Colours::transparentBlack);
+    label.setColour(juce::Label::outlineColourId, juce::Colours::transparentBlack);
+    
+    label.setText(
+                  label.getText().toUpperCase(),
+                  juce::dontSendNotification
+                );
+}
+
+void LookAndFeel::drawPopupMenuBackground(juce::Graphics &g, int width, int height)
+{
+    g.fillAll(BaseColours::basePink);
+    g.setColour(BaseColours::white);
+    g.drawRect(0, 0, width, height, 1);
 }

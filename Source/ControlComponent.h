@@ -30,7 +30,7 @@ private:
 };
 
 
-// RotarySliderWithLabels
+// LookAndFeel
 //==============================================================================
 
 class LookAndFeel : public juce::LookAndFeel_V4
@@ -44,6 +44,14 @@ public:
                             float rotaryEndAngle,
                             juce::Slider& slider
                           ) override;
+    void drawComboBox(juce::Graphics& g,
+                      int width, int height,
+                      bool isButtonDown, int buttonX, int buttonY, int buttonW, int buttonH,
+                      juce::ComboBox& box
+                      ) override;
+    void drawPopupMenuBackground(juce::Graphics& g, int width, int height) override;
+    juce::Font getComboBoxFont(juce::ComboBox& box) override;
+    void positionComboBoxText(juce::ComboBox& box, juce::Label& label) override;
     
 private:
     void drawRotarySliderLabel(juce::Graphics& g, juce::Rectangle<float> bounds, const juce::String& displayString);
@@ -54,6 +62,9 @@ private:
                                                                            );
 };
 
+
+// RotarySliderWithLabels
+//==============================================================================
 
 class RotarySliderWithLabels : public juce::Slider
 {
@@ -80,4 +91,24 @@ private:
     
     juce::RangedAudioParameter* param;
     juce::String suffix;
+};
+
+
+// DropdownMenu
+//==============================================================================
+class DropdownMenu : public juce::ComboBox
+{
+public:
+    DropdownMenu(const juce::String& componentName = {}) : juce::ComboBox(componentName)
+    {
+        setLookAndFeel(&lnf);
+    }
+    
+    ~DropdownMenu()
+    {
+        setLookAndFeel(nullptr);
+    }
+
+private:
+    LookAndFeel lnf;
 };
