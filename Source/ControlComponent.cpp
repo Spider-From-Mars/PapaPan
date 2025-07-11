@@ -265,6 +265,30 @@ void LookAndFeel::setPopupMenuColors()
 {
     setColour(juce::PopupMenu::highlightedBackgroundColourId, BaseColours::darkPink);
     setColour(juce::PopupMenu::backgroundColourId, juce::Colours::transparentBlack);
+    setColour(juce::PopupMenu::textColourId, BaseColours::white);
+}
+
+void LookAndFeel::drawPopupMenuItem(juce::Graphics& g, const juce::Rectangle<int>& area,
+                       const bool isSeparator, const bool isActive,
+                       const bool isHighlighted, const bool isTicked,
+                       const bool hasSubMenu, const juce::String& text,
+                       const juce::String& shortcutKeyText,
+                       const juce::Drawable* icon, const juce::Colour* const textColourToUse)
+{
+    if (isSeparator)
+    {
+        auto r = area.reduced(5, 0);
+        r.removeFromTop(juce::roundToInt(((float) r.getHeight() * 0.5f) - 0.5f));
+        
+        g.setColour(findColour(juce::PopupMenu::textColourId).withAlpha(0.8f));
+        g.fillRect(r.removeFromTop(1));
+    }
+    else
+    {
+        juce::LookAndFeel_V4::drawPopupMenuItem(g, area, isSeparator, isActive, isHighlighted,
+                                                isTicked, hasSubMenu, text, shortcutKeyText,
+                                                icon, textColourToUse);
+    }
 }
 
 // DropdownMenu

@@ -55,6 +55,12 @@ public:
     void drawPopupMenuBackground(juce::Graphics& g, int width, int height) override;
     juce::Font getComboBoxFont(juce::ComboBox& box) override;
     void positionComboBoxText(juce::ComboBox& box, juce::Label& label) override;
+    void drawPopupMenuItem(juce::Graphics& g, const juce::Rectangle<int>& area,
+                           const bool isSeparator, const bool isActive,
+                           const bool isHighlighted, const bool isTicked,
+                           const bool hasSubMenu, const juce::String& text,
+                           const juce::String& shortcutKeyText,
+                           const juce::Drawable* icon, const juce::Colour* const textColourToUse) override;
 
 private:
     void drawRotarySliderLabel(juce::Graphics& g, juce::Rectangle<float> bounds, const juce::String& displayString);
