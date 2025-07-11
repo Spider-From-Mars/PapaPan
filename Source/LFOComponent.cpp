@@ -7,6 +7,7 @@ LFOComponent::LFOComponent(juce::AudioProcessorValueTreeState& apvts) :
 {
     juce::AudioParameterChoice* mode = dynamic_cast<juce::AudioParameterChoice*>(apvts.getParameter("MODE"));
     modeSelector.addItemList(mode->choices, 2);
+    modeSelector.addSeparator();
     
     lfoSliderAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(apvts, "HERTZRATE", lfoSlider);
     modeSelectorAttachment = std::make_unique<juce::AudioProcessorValueTreeState::ComboBoxAttachment>(apvts,

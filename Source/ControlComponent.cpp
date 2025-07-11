@@ -246,19 +246,27 @@ void LookAndFeel::positionComboBoxText(juce::ComboBox& box, juce::Label& label)
     label.setBounds(box.getLocalBounds());
     label.setFont(getComboBoxFont(box));
     label.setJustificationType(juce::Justification::right);
+    
     label.setColour(juce::Label::textColourId, juce::Colours::white);
     label.setColour(juce::Label::backgroundColourId, juce::Colours::transparentBlack);
     label.setColour(juce::Label::outlineColourId, juce::Colours::transparentBlack);
-    
-    label.setText(
-                  label.getText().toUpperCase(),
-                  juce::dontSendNotification
-                );
 }
 
 void LookAndFeel::drawPopupMenuBackground(juce::Graphics &g, int width, int height)
 {
-    g.fillAll(BaseColours::basePink);
+    g.setColour(BaseColours::transparentPink);
+    g.fillRoundedRectangle(0, 0, width, height, 10.f);
+    
     g.setColour(BaseColours::white);
-    g.drawRect(0, 0, width, height, 1);
+    g.drawRoundedRectangle(0, 0, width, height, 8.f, 2);
 }
+
+void LookAndFeel::setPopupMenuColors()
+{
+    setColour(juce::PopupMenu::highlightedBackgroundColourId, BaseColours::darkPink);
+    setColour(juce::PopupMenu::backgroundColourId, juce::Colours::transparentBlack);
+}
+
+// DropdownMenu
+//==============================================================================
+

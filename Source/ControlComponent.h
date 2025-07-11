@@ -36,6 +36,7 @@ private:
 class LookAndFeel : public juce::LookAndFeel_V4
 {
 public:
+    LookAndFeel() : juce::LookAndFeel_V4() { setPopupMenuColors(); }
     void drawRotarySlider(
                             juce::Graphics& g,
                             int x, int y, int width, int height,
@@ -52,9 +53,10 @@ public:
     void drawPopupMenuBackground(juce::Graphics& g, int width, int height) override;
     juce::Font getComboBoxFont(juce::ComboBox& box) override;
     void positionComboBoxText(juce::ComboBox& box, juce::Label& label) override;
-    
+
 private:
     void drawRotarySliderLabel(juce::Graphics& g, juce::Rectangle<float> bounds, const juce::String& displayString);
+    void setPopupMenuColors();
     
     juce::Typeface::Ptr typeface = juce::Typeface::createSystemTypefaceFor(
                                                                            BinaryData::Comic_Sans_MS_Bold_ttf,
