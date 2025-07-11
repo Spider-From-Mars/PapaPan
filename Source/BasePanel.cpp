@@ -23,12 +23,11 @@ BasePanel::~BasePanel()
 
 void BasePanel::paint (juce::Graphics& g)
 {
-    const int rectWidth = 185;
-    const int x = (getWidth() - rectWidth) / 2;
+    const float x = (getWidth() - roundedRectWidth) / 2;
     
     g.setColour(BaseColours::darkPink);
     
-    g.fillRoundedRectangle(x, getHeight() - 190, rectWidth, 160, 10);
+    g.fillRoundedRectangle(x, getHeight() - 190, roundedRectWidth, 160, 10);
 }
 
 void BasePanel::resized()
@@ -55,16 +54,15 @@ void BasePanel::resized()
                        companyLabel.getFont().getHeight()
                    );
     
-    const int controlComponentWidth = 185;
-    const int x = (getWidth() - controlComponentWidth) / 2;
+    const float x = (getWidth() - roundedRectWidth) / 2;
     const int pad = 20;
     
-    lfoComponent.setBounds(x, 10, controlComponentWidth, 100);
-    midiComponent.setBounds(x, lfoComponent.getBottom() + pad, controlComponentWidth, 65);
+    lfoComponent.setBounds(x, 10, roundedRectWidth, 100);
+    midiComponent.setBounds(x, lfoComponent.getBottom() + pad, roundedRectWidth, 65);
     masterComponent.setBounds(
                               x,
                               midiComponent.getBottom() + pad,
-                              controlComponentWidth,
+                              roundedRectWidth,
                               110
                             );
 }

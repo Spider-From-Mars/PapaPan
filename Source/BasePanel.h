@@ -34,5 +34,7 @@ private:
     MasterComponent masterComponent;
     
     void setMainStyleLabel(juce::Label& label, float fontSize);
+    
+    const int roundedRectWidth = 205;
 };
  

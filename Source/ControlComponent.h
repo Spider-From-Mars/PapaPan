@@ -37,6 +37,7 @@ class LookAndFeel : public juce::LookAndFeel_V4
 {
 public:
     LookAndFeel() : juce::LookAndFeel_V4() { setPopupMenuColors(); }
+    
     void drawRotarySlider(
                             juce::Graphics& g,
                             int x, int y, int width, int height,
@@ -45,6 +46,7 @@ public:
                             float rotaryEndAngle,
                             juce::Slider& slider
                           ) override;
+    
     void drawComboBox(juce::Graphics& g,
                       int width, int height,
                       bool isButtonDown, int buttonX, int buttonY, int buttonW, int buttonH,

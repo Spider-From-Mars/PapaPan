@@ -226,11 +226,16 @@ juce::AudioProcessorValueTreeState::ParameterLayout PanCakeAudioProcessor::creat
                                                             modeChoices,
                                                             1));
     
-    juce::StringArray noteDurationChoices = {"1/2", "1/4", "1/8", "1/16", "1/32", "1/64", "1 Bar", "1.5 Bars", "2 Bars", "3 Bars", "4 Bars"};
+    juce::StringArray noteDurationChoices = {
+        "32 Bars", "16 Bars", "8 Bars", "4 Bars",
+        "3 Bars", "2 Bars", "1.5 Bars", "1 Bar",
+        "3/4", "1/2", "3/8", "1/4", "3/16", "1/8", "1/16",
+        "1/32", "1/64", "1/128"
+    };
     layout.add(std::make_unique<juce::AudioParameterChoice>(ParameterID("DURATION", 1),
                                                             "Note Duration",
                                                             noteDurationChoices,
-                                                            0));
+                                                            10));
     
     return layout;
 }

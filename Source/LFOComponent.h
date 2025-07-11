@@ -20,7 +20,9 @@ private:
     
     RotarySliderWithLabels lfoSlider;
     DropdownMenu modeSelector;
+    DropdownMenu durationSelector;
     
     std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> lfoSliderAttachment;
     std::unique_ptr<juce::AudioProcessorValueTreeState::ComboBoxAttachment> modeSelectorAttachment;
+    std::unique_ptr<juce::AudioProcessorValueTreeState::ComboBoxAttachment> durationSelectorAttachment;
 };

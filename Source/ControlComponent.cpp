@@ -245,7 +245,7 @@ void LookAndFeel::positionComboBoxText(juce::ComboBox& box, juce::Label& label)
 {
     label.setBounds(box.getLocalBounds());
     label.setFont(getComboBoxFont(box));
-    label.setJustificationType(juce::Justification::right);
+    label.setJustificationType(juce::Justification::centred);
     
     label.setColour(juce::Label::textColourId, juce::Colours::white);
     label.setColour(juce::Label::backgroundColourId, juce::Colours::transparentBlack);

@@ -29,7 +29,12 @@ private:
     float phaseIncrement = 0.0;
     double sampleRate = 44100.0;
     
-    std::array<double, 11> noteDurations = {1.0/2, 1.0/4, 1.0/8, 1.0/16, 1.0/32, 1.0/64, 4.0/4, 6.0/4, 8.0/4, 12.0/4, 16.0/4};
+    std::array<double, 18> noteDurations = {
+        32.0, 16.0, 8.0, 4.0,
+        3.0, 2.0, 1.5, 1.0,
+        3.0/4, 1.0/2, 3.0/8, 1.0/4, 3.0/16, 1.0/8, 1.0/16,
+        1.0/32, 1.0/64, 1.0/128
+    };
     
     float applyWave(int waveType, float phase);
 };
