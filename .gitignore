@@ -5,4 +5,5 @@ ExPer
 JuceLibraryCode
 Master.png
 DebugScheme.filtergraph
-
+MidiComponent.cpp
+MidiComponent.h

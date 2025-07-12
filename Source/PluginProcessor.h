@@ -27,7 +27,7 @@ private:
 //==============================================================================
 /**
 */
-class PanCakeAudioProcessor  : public juce::AudioProcessor
+class PanCakeAudioProcessor : public juce::AudioProcessor
 {
 public:
     //==============================================================================

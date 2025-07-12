@@ -3,7 +3,6 @@
 #include <JuceHeader.h>
 #include "BaseColours.h"
 #include "LFOComponent.h"
-#include "MidiComponent.h"
 #include "MasterComponent.h"
 
 //==============================================================================
@@ -30,7 +29,7 @@ private:
     juce::Label companyLabel {"Company Name", "Hamlet, inc."};
     
     LFOComponent lfoComponent;
-    MidiComponent midiComponent;
+//    MidiComponent midiComponent;
     MasterComponent masterComponent;
     
     void setMainStyleLabel(juce::Label& label, float fontSize);
