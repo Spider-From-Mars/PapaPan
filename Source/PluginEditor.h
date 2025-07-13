@@ -3,6 +3,7 @@
 #include <JuceHeader.h>
 #include "PluginProcessor.h"
 #include "BasePanel.h"
+#include "PlotComponent.h"
 #include "BaseColours.h"
 
 //==============================================================================
@@ -22,6 +23,7 @@ private:
     PanCakeAudioProcessor& audioProcessor;
     
     BasePanel basePanel;
+    PlotComponent plot;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (PanCakeAudioProcessorEditor)
 };

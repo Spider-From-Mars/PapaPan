@@ -6,6 +6,7 @@ PanCakeAudioProcessorEditor::PanCakeAudioProcessorEditor (PanCakeAudioProcessor&
     : AudioProcessorEditor (&p), audioProcessor (p), basePanel(audioProcessor.apvts)
 {
     addAndMakeVisible(basePanel);
+    addAndMakeVisible(plot);
         
     setSize(530, 630);
 }
@@ -23,4 +24,8 @@ void PanCakeAudioProcessorEditor::paint (juce::Graphics& g)
 void PanCakeAudioProcessorEditor::resized()
 {
     basePanel.setBounds(0, 0, 220, getHeight());
+    plot.setBounds(basePanel.getWidth(),
+                   0,
+                   getWidth() - basePanel.getWidth(),
+                   getHeight());
 }
