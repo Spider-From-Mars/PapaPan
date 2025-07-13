@@ -26,6 +26,6 @@ void PanCakeAudioProcessorEditor::resized()
     basePanel.setBounds(0, 0, 220, getHeight());
     plot.setBounds(basePanel.getWidth(),
                    0,
-                   getWidth() - basePanel.getWidth(),
+                   getWidth() - basePanel.getWidth() - 8,
                    getHeight());
 }
