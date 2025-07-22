@@ -141,9 +141,14 @@ void PanCakeAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce
 //    if (pitch != 2205)
 //        juce::Logger::outputDebugString("Pitch: " + juce::String(pitch));
     
+    
+    // TODO: Here and in setStateInformation() make one function for this
+    // TODO: Add handler when waveType and other changed
+    auto waveIndex = static_cast<int>(*apvts.getRawParameterValue("WAVETYPE"));
+    auto wave = static_cast<Panner::waveType>(waveIndex);
     panner.update(
                   *apvts.getRawParameterValue("MIX"),
-                  *apvts.getRawParameterValue("WAVETYPE"),
+                  wave,
                   *apvts.getRawParameterValue("MODE"),
                   *apvts.getRawParameterValue("DURATION"),
                   *apvts.getRawParameterValue("HERTZRATE"),
@@ -156,7 +161,7 @@ void PanCakeAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce
 //==============================================================================
 bool PanCakeAudioProcessor::hasEditor() const
 {
-    return true; // (change this to false if you choose to not supply an editor)
+    return true;
 }
 
 juce::AudioProcessorEditor* PanCakeAudioProcessor::createEditor()
@@ -178,9 +183,11 @@ void PanCakeAudioProcessor::setStateInformation (const void* data, int sizeInByt
     if (tree.isValid())
     {
         apvts.replaceState(tree);
+        auto waveIndex = static_cast<int>(*apvts.getRawParameterValue("WAVETYPE"));
+        auto wave = static_cast<Panner::waveType>(waveIndex);
         panner.update(
                       *apvts.getRawParameterValue("MIX"),
-                      *apvts.getRawParameterValue("WAVETYPE"),
+                      wave,
                       *apvts.getRawParameterValue("MODE"),
                       *apvts.getRawParameterValue("DURATION"),
                       *apvts.getRawParameterValue("HERTZRATE"),

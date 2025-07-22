@@ -17,13 +17,20 @@ enum NoteDuration
 
 class Panner {
 public:
+    
+    enum class waveType
+    {
+        sin,
+        triangle
+    };
+    
     void prepare(juce::dsp::ProcessSpec& spec);
     void process(juce::AudioBuffer<float>& buffer);
-    void update(int newMix, int newWaveType, const int newMode, const int newNoteDuration, float newHertzRate = 0, double newBpm = 0);
+    void update(int newMix, waveType newWave, const int newMode, const int newNoteDuration, float newHertzRate = 0, double newBpm = 0);
     
 private:
     float mix = 1.0;
-    int waveType = 0;
+    waveType wave = waveType::sin;
     float hertzRate = 0.0;
     float phase = 0.0;
     float phaseIncrement = 0.0;
@@ -36,5 +43,5 @@ private:
         1.0/32, 1.0/64, 1.0/128
     };
     
-    float applyWave(int waveType, float phase);
+    float applyWave(waveType wave, float phase);
 };

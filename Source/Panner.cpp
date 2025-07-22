@@ -8,10 +8,15 @@ void Panner::prepare(juce::dsp::ProcessSpec& spec)
     sampleRate = spec.sampleRate;
 }
 
-void Panner::update(int newMix, int newWaveType, const int newMode, const int newNoteDuration, float newHertzRate, double newBpm)
+void Panner::update(int newMix,
+                    waveType newWave,
+                    const int newMode,
+                    const int newNoteDuration,
+                    float newHertzRate,
+                    double newBpm)
 {
     mix = newMix / 100.0;
-    waveType = newWaveType;
+    wave = newWave;
     
     if (newMode == Modes::Hertz_Synced)
         hertzRate = newHertzRate;
@@ -38,7 +43,7 @@ void Panner::process(juce::AudioBuffer<float>& buffer)
         float dryLeft = left[i];
         float dryRight = right[i];
         
-        float pan = (phaseIncrement == 0) ? 0.5 : (0.5 + 0.5 * applyWave(waveType, phase));
+        float pan = (phaseIncrement == 0) ? 0.5 : (0.5 + 0.5 * applyWave(wave, phase));
         
         phase += phaseIncrement;
         if (phase >= juce::MathConstants<float>::twoPi)
@@ -55,16 +60,16 @@ void Panner::process(juce::AudioBuffer<float>& buffer)
     }
 }
 
-float Panner::applyWave(int waveType, float phase)
+float Panner::applyWave(waveType wave, float phase)
 {
     float modValue = 0.0;
     
-    switch (waveType) {
-        case 0:
+    switch (wave) {
+        case waveType::sin:
             modValue = std::sin(phase);
             break;
             
-        case 1:
+        case waveType::triangle:
             modValue = 2.0 * std::abs(
                 phase / juce::MathConstants<float>::twoPi - std::floor(phase / juce::MathConstants<float>::twoPi + 0.5
             ));

@@ -44,18 +44,29 @@ void PlotComponent::paint (juce::Graphics& g)
                          channelLabelY);
     
     // Pan function plot
+    drawPlot(g, usefulHeight);
+}
+
+void PlotComponent::resized()
+{
+
+}
+
+void PlotComponent::drawPlot(juce::Graphics& g, int xSize)
+{
+    juce::Path plotPath;
     
-    Path plotPath;
+    auto bounds = getLocalBounds();
     
-    float scaleX = MathConstants<float>::twoPi / usefulHeight;
+    auto period = juce::MathConstants<float>::twoPi;
+    float scaleX = period / xSize;
     const float centerY = bounds.getWidth() / 2;
     const float amplitude = -centerY + 2;
     
     for (int x = 0; x < bounds.getHeight(); x++)
     {
-        auto fx = x * scaleX + 2 * textFieldHeight;
+        auto fx = x * scaleX + (bounds.getHeight() - xSize);
         auto y = std::sin(fx);
-//        auto y = 2 * abs(2 * (fx / MathConstants<float>::twoPi - std::floor(fx / MathConstants<float>::twoPi + 0.5))) - 1;
         auto scaledY = centerY + y * amplitude;
         
         if (x == 0)
@@ -67,12 +78,7 @@ void PlotComponent::paint (juce::Graphics& g)
         plotPath.lineTo(scaledY, x);
     }
     
-    g.strokePath(plotPath, PathStrokeType(4, PathStrokeType::curved, PathStrokeType::rounded));
-}
-
-void PlotComponent::resized()
-{
-
+    g.strokePath(plotPath, juce::PathStrokeType(4, juce::PathStrokeType::curved, juce::PathStrokeType::rounded));
 }
 
 void PlotComponent::drawGrid(juce::Graphics& g, int x, int y, int height, int linesNum)
