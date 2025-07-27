@@ -22,8 +22,8 @@ private:
     
     void setupWaveButton(juce::Button& button, juce::AudioParameterChoice* waveParam, Panner::waveType type);
     
-    juce::TextButton sinButton;
-    juce::TextButton triangleButton;
+    juce::DrawableButton sinButton;
+    juce::DrawableButton triangleButton;
     
     float (*waveFunction)(float);
 };

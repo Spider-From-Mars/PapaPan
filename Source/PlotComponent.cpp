@@ -4,13 +4,27 @@
 #include "BaseColours.h"
 
 //==============================================================================
-PlotComponent::PlotComponent(juce::AudioProcessorValueTreeState& apvts)
+PlotComponent::PlotComponent(juce::AudioProcessorValueTreeState& apvts) :
+    sinButton("Sin", juce::DrawableButton::ImageFitted),
+    triangleButton("Triangle", juce::DrawableButton::ImageFitted)
 {
     waveFunction = std::sin;
+    
+    auto sineSVG = juce::Drawable::createFromImageData(BinaryData::sinWave_svg,
+                                                       BinaryData::sinWave_svgSize);
+    sinButton.setImages(sineSVG.get());
+    
+    auto triangleSVG = juce::Drawable::createFromImageData(BinaryData::triangleWave_svg,
+                                                           BinaryData::triangleWave_svgSize);
+    triangleButton.setImages(triangleSVG.get());
     
     auto* waveParam = dynamic_cast<juce::AudioParameterChoice*>(apvts.getParameter("WAVETYPE"));
     setupWaveButton(sinButton, waveParam, Panner::waveType::sin);
     setupWaveButton(triangleButton, waveParam, Panner::waveType::triangle);
+    
+    sinButton.setToggleState(true, juce::dontSendNotification);
+    sinButton.setRadioGroupId(1);
+    triangleButton.setRadioGroupId(1);
 }
 
 PlotComponent::~PlotComponent()
@@ -61,8 +75,15 @@ void PlotComponent::paint (juce::Graphics& g)
 void PlotComponent::resized()
 {
 //    auto bounds = getLocalBounds();
-    sinButton.setBounds(20, 50, 25, 25);
-    triangleButton.setBounds(20, sinButton.getBottom() + 10, 25, 25);
+    constexpr int buttonWidth = 25;
+    sinButton.setBounds(10,
+                        getLocalBounds().getBottom() - buttonWidth,
+                        buttonWidth,
+                        buttonWidth);
+    triangleButton.setBounds(sinButton.getX() + buttonWidth + 5,
+                             sinButton.getY(),
+                             buttonWidth,
+                             buttonWidth);
 }
 
 void PlotComponent::drawPlot(juce::Graphics& g, int xSize) const
@@ -171,6 +192,10 @@ void PlotComponent::drawGrid(juce::Graphics& g, int x, int y, int height, int li
 
 void PlotComponent::setupWaveButton(juce::Button& button, juce::AudioParameterChoice* waveParam, Panner::waveType type)
 {
+    button.setColour(juce::DrawableButton::backgroundColourId, juce::Colours::transparentBlack);
+    button.setColour(juce::DrawableButton::backgroundOnColourId,
+                     BaseColours::darkPink);
+    
     button.onClick = [this, waveParam, type]()
     {
         waveParam->beginChangeGesture();

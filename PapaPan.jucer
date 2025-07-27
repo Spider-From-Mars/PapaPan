@@ -5,6 +5,9 @@
               pluginFormats="buildStandalone,buildVST3" pluginVST3Category="Modulation">
   <MAINGROUP id="huGugp" name="PapaPan">
     <GROUP id="{D123069D-D6DE-E47E-F810-D8810F3C870B}" name="Source">
+      <FILE id="TUxrSr" name="triangleWave.svg" compile="0" resource="1"
+            file="Resources/triangleWave.svg"/>
+      <FILE id="VBq2qC" name="sinWave.svg" compile="0" resource="1" file="Resources/sinWave.svg"/>
       <GROUP id="{7A21C192-837B-BC73-0FF0-536D4F941226}" name="Plot">
         <FILE id="Zgphdd" name="PlotComponent.cpp" compile="1" resource="0"
               file="Source/PlotComponent.cpp"/>
