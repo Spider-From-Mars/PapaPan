@@ -4,9 +4,13 @@
 #include "BaseColours.h"
 
 //==============================================================================
-PlotComponent::PlotComponent()
+PlotComponent::PlotComponent(juce::AudioProcessorValueTreeState& apvts)
 {
-
+    waveFunction = std::sin;
+    
+    auto* waveParam = dynamic_cast<juce::AudioParameterChoice*>(apvts.getParameter("WAVETYPE"));
+    setupWaveButton(sinButton, waveParam, Panner::waveType::sin);
+    setupWaveButton(triangleButton, waveParam, Panner::waveType::triangle);
 }
 
 PlotComponent::~PlotComponent()
@@ -15,8 +19,6 @@ PlotComponent::~PlotComponent()
 
 void PlotComponent::paint (juce::Graphics& g)
 {
-    using namespace juce;
-    
     auto bounds = getLocalBounds();
     
     g.fillAll(BaseColours::darkPink);
@@ -29,44 +31,56 @@ void PlotComponent::paint (juce::Graphics& g)
     
     drawGrid(g, 0, textFieldHeight, usefulHeight, 4);
     
+    // Pan function plot
+    drawPlot(g, usefulHeight);
+    
     // Channel Label (Left/Right)
     
     constexpr int channelLabelPad = 3;
     int channelLabelY = textFieldHeight - channelLabelPad;
     
+    g.setColour(BaseColours::transparentPink);
+    g.fillRect(0, 0, bounds.getWidth(), textFieldHeight);
+    g.fillRect(0,
+               bounds.getBottom() - textFieldHeight,
+               bounds.getWidth(),
+               textFieldHeight
+            );
+    
+    g.setColour(BaseColours::white);
     g.drawSingleLineText("Left",
                          channelLabelPad,
                          channelLabelY);
     
-    auto labelWidth = GlyphArrangement::getStringWidth(g.getCurrentFont(), "Right");
+    auto labelWidth = juce::GlyphArrangement::getStringWidth(g.getCurrentFont(), "Right");
     g.drawSingleLineText("Right",
                          bounds.getWidth() - labelWidth - channelLabelPad,
                          channelLabelY);
-    
-    // Pan function plot
-    drawPlot(g, usefulHeight);
 }
 
 void PlotComponent::resized()
 {
-
+//    auto bounds = getLocalBounds();
+    sinButton.setBounds(20, 50, 25, 25);
+    triangleButton.setBounds(20, sinButton.getBottom() + 10, 25, 25);
 }
 
-void PlotComponent::drawPlot(juce::Graphics& g, int xSize)
+void PlotComponent::drawPlot(juce::Graphics& g, int xSize) const
 {
-    juce::Path plotPath;
+    using namespace juce;
+    Graphics::ScopedSaveState state(g);
+    Path plotPath;
     
     auto bounds = getLocalBounds();
     
-    auto period = juce::MathConstants<float>::twoPi;
-    float scaleX = period / xSize;
+    float scaleX = MathConstants<float>::twoPi / xSize;
     const float centerY = bounds.getWidth() / 2;
     const float amplitude = -centerY + 2;
     
     for (int x = 0; x < bounds.getHeight(); x++)
     {
         auto fx = x * scaleX + (bounds.getHeight() - xSize);
-        auto y = std::sin(fx);
+        auto y = waveFunction(fx);
         auto scaledY = centerY + y * amplitude;
         
         if (x == 0)
@@ -78,10 +92,19 @@ void PlotComponent::drawPlot(juce::Graphics& g, int xSize)
         plotPath.lineTo(scaledY, x);
     }
     
-    g.strokePath(plotPath, juce::PathStrokeType(4, juce::PathStrokeType::curved, juce::PathStrokeType::rounded));
+    g.strokePath(plotPath, PathStrokeType(4, PathStrokeType::curved, PathStrokeType::rounded));
 }
 
-void PlotComponent::drawGrid(juce::Graphics& g, int x, int y, int height, int linesNum)
+float PlotComponent::triangle(float x)
+{
+    auto period = juce::MathConstants<float>::twoPi;
+    
+    x = std::fmod(x + period / 4.0f, period) / period;
+    
+    return 1 - 4.0f * std::abs(x - 0.5f);
+}
+
+void PlotComponent::drawGrid(juce::Graphics& g, int x, int y, int height, int linesNum) const
 {
     juce::Graphics::ScopedSaveState state(g);
     
@@ -143,4 +166,32 @@ void PlotComponent::drawGrid(juce::Graphics& g, int x, int y, int height, int li
                                     getHeight())
                    );
     }
+}
+
+
+void PlotComponent::setupWaveButton(juce::Button& button, juce::AudioParameterChoice* waveParam, Panner::waveType type)
+{
+    button.onClick = [this, waveParam, type]()
+    {
+        waveParam->beginChangeGesture();
+        waveParam->setValueNotifyingHost(static_cast<int>(type));
+        waveParam->endChangeGesture();
+        
+        switch (type) {
+            case Panner::waveType::sin:
+                waveFunction = std::sin;
+                sinButton.setToggleState(true, juce::dontSendNotification);
+                break;
+            case Panner::waveType::triangle:
+                waveFunction = triangle;
+                triangleButton.setToggleState(true, juce::dontSendNotification);
+                break;
+            default:
+                jassertfalse;
+        }
+        
+        repaint(getLocalBounds());
+    };
+    
+    addAndMakeVisible(button);
 }

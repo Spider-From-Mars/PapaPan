@@ -3,7 +3,7 @@
 
 //==============================================================================
 PanCakeAudioProcessorEditor::PanCakeAudioProcessorEditor (PanCakeAudioProcessor& p)
-    : AudioProcessorEditor (&p), audioProcessor (p), basePanel(audioProcessor.apvts)
+: AudioProcessorEditor (&p), audioProcessor (p), basePanel(audioProcessor.apvts), plot(audioProcessor.apvts)
 {
     addAndMakeVisible(basePanel);
     addAndMakeVisible(plot);

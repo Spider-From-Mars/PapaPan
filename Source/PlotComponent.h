@@ -6,7 +6,7 @@
 class PlotComponent : public juce::Component
 {
 public:
-    PlotComponent();
+    PlotComponent(juce::AudioProcessorValueTreeState& apvts);
     ~PlotComponent() override;
 
     void paint (juce::Graphics&) override;
@@ -15,6 +15,15 @@ public:
 private:
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (PlotComponent)
     
-    void drawGrid(juce::Graphics& g, int x, int y, int height, int linesNum);
-    void drawPlot(juce::Graphics& g, int xSize);
+    static float triangle(float x);
+    
+    void drawGrid(juce::Graphics& g, int x, int y, int height, int linesNum) const;
+    void drawPlot(juce::Graphics& g, int xSize) const;
+    
+    void setupWaveButton(juce::Button& button, juce::AudioParameterChoice* waveParam, Panner::waveType type);
+    
+    juce::TextButton sinButton;
+    juce::TextButton triangleButton;
+    
+    float (*waveFunction)(float);
 };
