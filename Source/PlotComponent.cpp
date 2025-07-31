@@ -4,7 +4,8 @@
 #include "BaseColours.h"
 
 //==============================================================================
-PlotComponent::PlotComponent(juce::AudioProcessorValueTreeState& apvts) :
+PlotComponent::PlotComponent(juce::AudioProcessorValueTreeState& apvts, Modulation& mod) :
+    mod(mod),
     sinButton("Sin", juce::DrawableButton::ImageFitted),
     triangleButton("Triangle", juce::DrawableButton::ImageFitted)
 {
@@ -56,9 +57,9 @@ void PlotComponent::paint (juce::Graphics& g)
     g.setColour(BaseColours::transparentPink);
     g.fillRect(0, 0, bounds.getWidth(), textFieldHeight);
     g.fillRect(0,
-               bounds.getBottom() - textFieldHeight,
+               bounds.getBottom() - textFieldHeight - 2,
                bounds.getWidth(),
-               textFieldHeight
+               textFieldHeight + 2
             );
     
     g.setColour(BaseColours::white);
@@ -114,15 +115,6 @@ void PlotComponent::drawPlot(juce::Graphics& g, int xSize) const
     }
     
     g.strokePath(plotPath, PathStrokeType(4, PathStrokeType::curved, PathStrokeType::rounded));
-}
-
-float PlotComponent::triangle(float x)
-{
-    auto period = juce::MathConstants<float>::twoPi;
-    
-    x = std::fmod(x + period / 4.0f, period) / period;
-    
-    return 1 - 4.0f * std::abs(x - 0.5f);
 }
 
 void PlotComponent::drawGrid(juce::Graphics& g, int x, int y, int height, int linesNum) const
@@ -208,7 +200,7 @@ void PlotComponent::setupWaveButton(juce::Button& button, juce::AudioParameterCh
                 sinButton.setToggleState(true, juce::dontSendNotification);
                 break;
             case Panner::waveType::triangle:
-                waveFunction = triangle;
+                waveFunction = Modulation::triangle;
                 triangleButton.setToggleState(true, juce::dontSendNotification);
                 break;
             default:

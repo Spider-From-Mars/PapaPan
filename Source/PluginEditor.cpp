@@ -2,8 +2,11 @@
 #include "PluginEditor.h"
 
 //==============================================================================
-PanCakeAudioProcessorEditor::PanCakeAudioProcessorEditor (PanCakeAudioProcessor& p)
-: AudioProcessorEditor (&p), audioProcessor (p), basePanel(audioProcessor.apvts), plot(audioProcessor.apvts)
+PanCakeAudioProcessorEditor::PanCakeAudioProcessorEditor (PanCakeAudioProcessor& p) :
+    AudioProcessorEditor (&p),
+    audioProcessor (p),
+    basePanel(audioProcessor.apvts),
+    plot(audioProcessor.apvts, p.getModulation())
 {
     addAndMakeVisible(basePanel);
     addAndMakeVisible(plot);

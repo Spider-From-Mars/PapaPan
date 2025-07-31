@@ -43,7 +43,8 @@
       <FILE id="Q4qfSJ" name="PluginEditor.cpp" compile="1" resource="0"
             file="Source/PluginEditor.cpp"/>
       <FILE id="MUL44A" name="PluginEditor.h" compile="0" resource="0" file="Source/PluginEditor.h"/>
-      <FILE id="h2Tuxa" name="Panner.cpp" compile="1" resource="0" file="Source/Panner.cpp"/>
+      <FILE id="h2Tuxa" name="Panner.cpp" compile="1" resource="0" file="Source/Panner.cpp"
+            xcodeResource="1"/>
       <FILE id="Uq5aGt" name="Panner.h" compile="0" resource="0" file="Source/Panner.h"/>
       <FILE id="EbxiAv" name="PitchDetector.cpp" compile="1" resource="0"
             file="Source/PitchDetector.cpp"/>

@@ -1,5 +1,26 @@
 #include "Panner.h"
 
+void Modulation::advance()
+{
+    phase += phaseIncrement;
+    if (phase >= juce::MathConstants<float>::twoPi)
+        phase -= juce::MathConstants<float>::twoPi;
+}
+
+float Modulation::triangle(float phase)
+{
+    constexpr auto period = juce::MathConstants<float>::twoPi;
+    
+    phase = std::fmod(phase + period / 4.0f, period) / period;
+    
+    return 1 - 4.0f * std::abs(phase - 0.5f);
+}
+
+
+Panner::Panner(Modulation& mod) : mod(mod)
+{
+}
+
 void Panner::prepare(juce::dsp::ProcessSpec& spec)
 {
     jassert (spec.sampleRate > 0);
@@ -26,7 +47,7 @@ void Panner::update(int newMix,
         hertzRate = 1.0 / beatDuration;
     }
     
-    phaseIncrement = juce::MathConstants<float>::twoPi * hertzRate / sampleRate;
+    mod.setPhaseIncrement(juce::MathConstants<float>::twoPi * hertzRate / sampleRate);
 }
 
 void Panner::process(juce::AudioBuffer<float>& buffer)
@@ -35,19 +56,17 @@ void Panner::process(juce::AudioBuffer<float>& buffer)
     auto* left = buffer.getWritePointer(0);
     auto* right = buffer.getWritePointer(1);
     
-    const float smoothingFactor = 0.05;
-    const float GAIN = juce::MathConstants<float>::sqrt2;
+    constexpr float smoothingFactor = 0.05;
+    constexpr float GAIN = juce::MathConstants<float>::sqrt2;
     
     for (int i = 0; i < numSamples; i++)
     {
         float dryLeft = left[i];
         float dryRight = right[i];
         
-        float pan = (phaseIncrement == 0) ? 0.5 : (0.5 + 0.5 * applyWave(wave, phase));
+        float pan = 0.5 + 0.5 * applyWave(wave, mod.getPhase());
         
-        phase += phaseIncrement;
-        if (phase >= juce::MathConstants<float>::twoPi)
-            phase -= juce::MathConstants<float>::twoPi;
+        mod.advance();
         
         float wetLeft = dryLeft * std::cos(pan * juce::MathConstants<float>::halfPi) * GAIN;
         float wetRight = dryRight * std::sin(pan * juce::MathConstants<float>::halfPi) * GAIN;
@@ -70,11 +89,7 @@ float Panner::applyWave(waveType wave, float phase)
             break;
             
         case waveType::triangle:
-            modValue = 2.0 * std::abs(
-                phase / juce::MathConstants<float>::twoPi - std::floor(phase / juce::MathConstants<float>::twoPi + 0.5
-            ));
-            modValue = modValue * 2.0 - 1.0;
-            modValue = std::tanh(2.0 * modValue);
+            modValue = Modulation::triangle(phase);
             break;
     }
     
