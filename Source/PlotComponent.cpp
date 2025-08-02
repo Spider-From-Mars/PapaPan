@@ -9,6 +9,8 @@ PlotComponent::PlotComponent(juce::AudioProcessorValueTreeState& apvts, Modulati
     sinButton("Sin", juce::DrawableButton::ImageFitted),
     triangleButton("Triangle", juce::DrawableButton::ImageFitted)
 {
+    startTimerHz(30);
+    
     waveFunction = std::sin;
     
     auto sineSVG = juce::Drawable::createFromImageData(BinaryData::sinWave_svg,
@@ -48,6 +50,7 @@ void PlotComponent::paint (juce::Graphics& g)
     
     // Pan function plot
     drawPlot(g, usefulHeight);
+    drawPanSegment(g, usefulHeight);
     
     // Channel Label (Left/Right)
     
@@ -75,7 +78,6 @@ void PlotComponent::paint (juce::Graphics& g)
 
 void PlotComponent::resized()
 {
-//    auto bounds = getLocalBounds();
     constexpr int buttonWidth = 25;
     sinButton.setBounds(10,
                         getLocalBounds().getBottom() - buttonWidth,
@@ -89,13 +91,12 @@ void PlotComponent::resized()
 
 void PlotComponent::drawPlot(juce::Graphics& g, int xSize) const
 {
-    using namespace juce;
-    Graphics::ScopedSaveState state(g);
-    Path plotPath;
+    juce::Graphics::ScopedSaveState state(g);
+    juce::Path plotPath;
     
     auto bounds = getLocalBounds();
     
-    float scaleX = MathConstants<float>::twoPi / xSize;
+    float scaleX = juce::MathConstants<float>::twoPi / xSize;
     const float centerY = bounds.getWidth() / 2;
     const float amplitude = -centerY + 2;
     
@@ -113,8 +114,45 @@ void PlotComponent::drawPlot(juce::Graphics& g, int xSize) const
         
         plotPath.lineTo(scaledY, x);
     }
+
     
-    g.strokePath(plotPath, PathStrokeType(4, PathStrokeType::curved, PathStrokeType::rounded));
+    g.strokePath(plotPath, juce::PathStrokeType(4,
+                                                juce::PathStrokeType::curved,
+                                                juce::PathStrokeType::rounded
+                                                )
+                 );
+}
+
+void PlotComponent::drawPanSegment(juce::Graphics& g, int xSize) const
+{
+    juce::Graphics::ScopedSaveState state(g);
+    
+    g.setColour(BaseColours::yellow);
+    
+    juce::Path segmentPath;
+    
+    const float centerY = getWidth() / 2;
+    const float amplitude = -centerY + 2;
+    constexpr auto segmentWidth = juce::MathConstants<float>::pi / 12;
+    auto segmentStart = mod.getPhase() - segmentWidth;
+    auto segmentEnd = mod.getPhase() + segmentWidth;
+    auto offset = (getHeight() - xSize) / 2;
+    
+    constexpr float twoPi = juce::MathConstants<float>::twoPi;
+    
+    segmentPath.startNewSubPath(centerY + waveFunction(segmentStart) * amplitude,
+                                offset + (segmentStart / twoPi) * xSize
+                                );
+    
+    for (auto p = segmentStart+0.05; p <= segmentEnd; p+=0.05)
+    {
+        segmentPath.lineTo(centerY + waveFunction(p) * amplitude,
+                           offset + (p / twoPi) * xSize);
+    }
+    
+    g.strokePath(segmentPath,
+                 juce::PathStrokeType(4, juce::PathStrokeType::curved, juce::PathStrokeType::rounded)
+                 );
 }
 
 void PlotComponent::drawGrid(juce::Graphics& g, int x, int y, int height, int linesNum) const

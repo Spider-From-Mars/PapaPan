@@ -85,11 +85,11 @@ float Panner::applyWave(waveType wave, float phase)
     
     switch (wave) {
         case waveType::sin:
-            modValue = std::sin(phase);
+            modValue = -std::sin(phase);
             break;
             
         case waveType::triangle:
-            modValue = Modulation::triangle(phase);
+            modValue = -Modulation::triangle(phase);
             break;
     }
     
