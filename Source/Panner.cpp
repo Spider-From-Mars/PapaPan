@@ -2,9 +2,16 @@
 
 void Modulation::advance()
 {
-    phase += phaseIncrement;
-    if (phase >= juce::MathConstants<float>::twoPi)
-        phase -= juce::MathConstants<float>::twoPi;
+    if (modType == Modes::Beat_Retrig or modType == Modes::Hertz_Retrig)
+    {
+        phase += phaseIncrement;
+        if (phase >= juce::MathConstants<float>::twoPi)
+            phase -= juce::MathConstants<float>::twoPi;
+    }
+    else if (modType == Modes::Beat_Synced)
+    {
+        
+    }
 }
 
 float Modulation::triangle(float phase)
@@ -29,22 +36,34 @@ void Panner::prepare(juce::dsp::ProcessSpec& spec)
     sampleRate = spec.sampleRate;
 }
 
-void Panner::update(int newMix,
-                    waveType newWave,
-                    const int newMode,
-                    const int newNoteDuration,
-                    float newHertzRate,
-                    double newBpm)
+void Panner::update(const juce::AudioProcessorValueTreeState& apvts, const juce::AudioPlayHead::PositionInfo& posInfo)
 {
-    mix = newMix / 100.0;
-    wave = newWave;
+    mix = *apvts.getRawParameterValue("MIX") / 100.0;
     
-    if (newMode == Modes::Hertz_Synced)
-        hertzRate = newHertzRate;
-    else
-    {
-        float beatDuration = (newBpm / 60) * noteDurations[newNoteDuration];
-        hertzRate = 1.0 / beatDuration;
+    auto waveIndex = static_cast<int>(*apvts.getRawParameterValue("WAVETYPE"));
+    wave = static_cast<Panner::waveType>(waveIndex);
+    
+    auto mode = static_cast<int>(*apvts.getRawParameterValue("MODE"));
+    auto newMode = static_cast<Modulation::Modes>(mode);
+    mod.setModType(newMode);
+    
+    switch (newMode) {
+        case Modulation::Modes::Hertz_Retrig:
+            hertzRate = *apvts.getRawParameterValue("HERTZRATE");
+            break;
+        case Modulation::Modes::Beat_Retrig:
+        {
+            auto bpm = posInfo.getBpm();
+            auto newBpm = bpm ? *bpm : 120.f;
+
+            float beatDuration = (newBpm / 60) * noteDurations[*apvts.getRawParameterValue("DURATION")];
+            hertzRate = 1.0 / beatDuration;
+            break;
+        }
+        case Modulation::Modes::Hertz_Synced:
+            break;
+        case Modulation::Modes::Beat_Synced:
+            break;
     }
     
     mod.setPhaseIncrement(juce::MathConstants<float>::twoPi * hertzRate / sampleRate);

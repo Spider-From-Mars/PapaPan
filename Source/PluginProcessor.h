@@ -70,6 +70,8 @@ public:
     Modulation& getModulation() { return modulation; }
     
     juce::AudioProcessorValueTreeState apvts;
+    juce::AudioBuffer<float> sharedBuffer;
+    juce::CriticalSection bufferLock;
     float pitch = 0;
 
 private:
@@ -78,8 +80,6 @@ private:
     Modulation modulation;
     
     juce::AudioProcessorValueTreeState::ParameterLayout createParameterLayout();
-    
-    double getCurrentBpm();
     
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (PanCakeAudioProcessor)

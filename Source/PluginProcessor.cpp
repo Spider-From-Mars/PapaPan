@@ -139,23 +139,14 @@ void PanCakeAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce
     
 //    pitchThread.setBuffer(buffer);
 //    pitch = pitchThread.getPitch();
-//    if (pitch != 2205)
-//        juce::Logger::outputDebugString("Pitch: " + juce::String(pitch));
     
+    const juce::ScopedLock sl(bufferLock);
+    sharedBuffer.makeCopyOf(buffer);
     
-    // TODO: Here and in setStateInformation() make one function for this
-    // TODO: Add handler when waveType and other changed
-    auto waveIndex = static_cast<int>(*apvts.getRawParameterValue("WAVETYPE"));
-    auto wave = static_cast<Panner::waveType>(waveIndex);
-    panner.update(
-                  *apvts.getRawParameterValue("MIX"),
-                  wave,
-                  *apvts.getRawParameterValue("MODE"),
-                  *apvts.getRawParameterValue("DURATION"),
-                  *apvts.getRawParameterValue("HERTZRATE"),
-                  *apvts
-                  .getRawParameterValue("MODE") == Modes::Beat_Synced ? getCurrentBpm() : 120.0
-                );
+    static auto* playHead = getPlayHead();
+    if (not playHead) return;
+    
+    panner.update(apvts, *playHead->getPosition());
     panner.process(buffer);
 }
 
@@ -184,17 +175,7 @@ void PanCakeAudioProcessor::setStateInformation (const void* data, int sizeInByt
     if (tree.isValid())
     {
         apvts.replaceState(tree);
-        auto waveIndex = static_cast<int>(*apvts.getRawParameterValue("WAVETYPE"));
-        auto wave = static_cast<Panner::waveType>(waveIndex);
-        panner.update(
-                      *apvts.getRawParameterValue("MIX"),
-                      wave,
-                      *apvts.getRawParameterValue("MODE"),
-                      *apvts.getRawParameterValue("DURATION"),
-                      *apvts.getRawParameterValue("HERTZRATE"),
-                      *apvts
-                      .getRawParameterValue("MODE") == Modes::Beat_Synced ? getCurrentBpm() : 120.0
-                    );
+//        panner.update(apvts);
     }
 }
 
@@ -228,7 +209,7 @@ juce::AudioProcessorValueTreeState::ParameterLayout PanCakeAudioProcessor::creat
                                                            juce::NormalisableRange<float>(0.f, 100.f, 0.01f, 0.4f),
                                                            0));
     
-    juce::StringArray modeChoices = {"Hertz Synced", "Beat Synced"};
+    juce::StringArray modeChoices = {"Hertz Retrig.", "Beat Retrig.", "Hertz Synced", "Beat Synced"};
     layout.add(std::make_unique<juce::AudioParameterChoice>(ParameterID("MODE", 1),
                                                             "Mode",
                                                             modeChoices,
@@ -249,18 +230,18 @@ juce::AudioProcessorValueTreeState::ParameterLayout PanCakeAudioProcessor::creat
 }
 
 
-double PanCakeAudioProcessor::getCurrentBpm()
-{
-    if (auto* playHead = getPlayHead())
-    {
-        auto posInfo = playHead->getPosition();
-        auto bpm = posInfo->getBpm();
-        if (bpm)
-            return *bpm;
-    }
-    
-    return 120.0;
-}
+//double PanCakeAudioProcessor::getCurrentBpm()
+//{
+//    if (auto* playHead = getPlayHead())
+//    {
+//        auto posInfo = playHead->getPosition();
+//        auto bpm = posInfo->getBpm();
+//        if (bpm)
+//            return *bpm;
+//    }
+//    
+//    return 120.0;
+//}
 
 // ============== PitchDetectionThread ==============
 

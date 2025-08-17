@@ -1,12 +1,13 @@
 #pragma once
 
 #include <JuceHeader.h>
+#include "PluginProcessor.h"
 #include "Panner.h"
 
 class PlotComponent : public juce::Component, private juce::Timer
 {
 public:
-    PlotComponent(juce::AudioProcessorValueTreeState& apvts, Modulation& mod);
+    PlotComponent(PanCakeAudioProcessor& p, Modulation& mod);
     ~PlotComponent() override;
 
     void paint (juce::Graphics&) override;
@@ -15,7 +16,7 @@ public:
 private:
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (PlotComponent)
     
-    void timerCallback() override { repaint(); }
+    void timerCallback() override;
     
     void drawGrid(juce::Graphics& g, int x, int y, int height, int linesNum) const;
     void drawPlot(juce::Graphics& g, int xSize) const;
@@ -23,10 +24,12 @@ private:
     
     void setupWaveButton(juce::Button& button, juce::AudioParameterChoice* waveParam, Panner::waveType type);
     
+    PanCakeAudioProcessor& audioProcessor;
     Modulation &mod;
     
     juce::DrawableButton sinButton;
     juce::DrawableButton triangleButton;
+    juce::AudioVisualiserComponent visualiser {1};
     
     float (*waveFunction)(float);
 };

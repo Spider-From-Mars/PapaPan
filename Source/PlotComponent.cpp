@@ -4,7 +4,8 @@
 #include "BaseColours.h"
 
 //==============================================================================
-PlotComponent::PlotComponent(juce::AudioProcessorValueTreeState& apvts, Modulation& mod) :
+PlotComponent::PlotComponent(PanCakeAudioProcessor& p, Modulation& mod) :
+    audioProcessor(p),
     mod(mod),
     sinButton("Sin", juce::DrawableButton::ImageFitted),
     triangleButton("Triangle", juce::DrawableButton::ImageFitted)
@@ -21,13 +22,19 @@ PlotComponent::PlotComponent(juce::AudioProcessorValueTreeState& apvts, Modulati
                                                            BinaryData::triangleWave_svgSize);
     triangleButton.setImages(triangleSVG.get());
     
-    auto* waveParam = dynamic_cast<juce::AudioParameterChoice*>(apvts.getParameter("WAVETYPE"));
+    auto* waveParam = dynamic_cast<juce::AudioParameterChoice*>(p.apvts.getParameter("WAVETYPE"));
     setupWaveButton(sinButton, waveParam, Panner::waveType::sin);
     setupWaveButton(triangleButton, waveParam, Panner::waveType::triangle);
     
     sinButton.setToggleState(true, juce::dontSendNotification);
     sinButton.setRadioGroupId(1);
     triangleButton.setRadioGroupId(1);
+    
+    visualiser.setBufferSize(512);
+    visualiser.setSamplesPerBlock(128);
+    visualiser.setColours(juce::Colours::transparentWhite,
+                          BaseColours::white.withAlpha(0.4f));
+    addAndMakeVisible(visualiser);
 }
 
 PlotComponent::~PlotComponent()
@@ -76,17 +83,42 @@ void PlotComponent::paint (juce::Graphics& g)
                          channelLabelY);
 }
 
+void PlotComponent::timerCallback()
+{
+    const juce::ScopedLock sl(audioProcessor.bufferLock);
+    const auto& buffer = audioProcessor.sharedBuffer;
+    
+    visualiser.pushBuffer(buffer);
+    repaint(getLocalBounds());
+}
+
 void PlotComponent::resized()
 {
+    auto bounds = getLocalBounds();
+    
     constexpr int buttonWidth = 25;
     sinButton.setBounds(10,
-                        getLocalBounds().getBottom() - buttonWidth,
+                        bounds.getBottom() - buttonWidth,
                         buttonWidth,
                         buttonWidth);
     triangleButton.setBounds(sinButton.getX() + buttonWidth + 5,
                              sinButton.getY(),
                              buttonWidth,
                              buttonWidth);
+    
+    visualiser.setBounds(
+                         bounds.getCentreX(),
+                         bounds.getCentreY(),
+                         bounds.getHeight(),
+                         90
+                     );
+    visualiser.setTransform(
+        juce::AffineTransform::rotation(
+            -juce::MathConstants<float>::halfPi,
+            bounds.getCentreX(),
+            bounds.getCentreY()
+        ).translated(-visualiser.getHeight() / 2, visualiser.getWidth() / 2)
+    );
 }
 
 void PlotComponent::drawPlot(juce::Graphics& g, int xSize) const

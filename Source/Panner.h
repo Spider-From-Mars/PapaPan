@@ -1,12 +1,6 @@
 #pragma once
 #include <JuceHeader.h>
 
-enum Modes
-{
-    Hertz_Synced,
-    Beat_Synced
-};
-
 enum NoteDuration
 {
     Half,
@@ -18,15 +12,27 @@ enum NoteDuration
 class Modulation
 {
 public:
+    
+    enum class Modes
+    {
+        Hertz_Retrig,
+        Beat_Retrig,
+        Hertz_Synced,
+        Beat_Synced
+    };
+    
     void advance();
     void setPhaseIncrement(float increment) { phaseIncrement = increment; }
     float getPhase() const { return phase; }
+    Modes getModType() const { return modType; }
+    void setModType(Modes mode) { modType = mode; }
     
     static float triangle(float phase);
     
 private:
     float phase = 0.0;
     float phaseIncrement = 0.0;
+    Modes modType;
 };
 
 class Panner {
@@ -41,7 +47,8 @@ public:
     Panner(Modulation& mod);
     void prepare(juce::dsp::ProcessSpec& spec);
     void process(juce::AudioBuffer<float>& buffer);
-    void update(int newMix, waveType newWave, const int newMode, const int newNoteDuration, float newHertzRate = 0, double newBpm = 0);
+    void update(const juce::AudioProcessorValueTreeState& apvts,
+                const juce::AudioPlayHead::PositionInfo& posInfo);
     
 private:
     float mix = 1.0;
