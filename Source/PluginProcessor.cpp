@@ -12,8 +12,7 @@ PanCakeAudioProcessor::PanCakeAudioProcessor()
                        .withOutput ("Output", juce::AudioChannelSet::stereo(), true)
                      #endif
                        ),
-        apvts(*this, nullptr, "Parameters", createParameterLayout()),
-        panner(modulation)
+        apvts(*this, nullptr, "Parameters", createParameterLayout())
 #endif
 {
 }
@@ -143,11 +142,14 @@ void PanCakeAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce
     const juce::ScopedLock sl(bufferLock);
     sharedBuffer.makeCopyOf(buffer);
     
-    static auto* playHead = getPlayHead();
-    if (not playHead) return;
-    
-    panner.update(apvts, *playHead->getPosition());
-    panner.process(buffer);
+    if (auto* playHead = getPlayHead())
+    {
+        if (auto pos = playHead->getPosition())
+        {
+            panner.update(apvts, *pos);
+            panner.process(buffer);
+        }
+    }
 }
 
 //==============================================================================
@@ -175,7 +177,6 @@ void PanCakeAudioProcessor::setStateInformation (const void* data, int sizeInByt
     if (tree.isValid())
     {
         apvts.replaceState(tree);
-//        panner.update(apvts);
     }
 }
 
@@ -228,20 +229,6 @@ juce::AudioProcessorValueTreeState::ParameterLayout PanCakeAudioProcessor::creat
     
     return layout;
 }
-
-
-//double PanCakeAudioProcessor::getCurrentBpm()
-//{
-//    if (auto* playHead = getPlayHead())
-//    {
-//        auto posInfo = playHead->getPosition();
-//        auto bpm = posInfo->getBpm();
-//        if (bpm)
-//            return *bpm;
-//    }
-//    
-//    return 120.0;
-//}
 
 // ============== PitchDetectionThread ==============
 

@@ -67,7 +67,7 @@ public:
     void getStateInformation (juce::MemoryBlock& destData) override;
     void setStateInformation (const void* data, int sizeInBytes) override;
     
-    Modulation& getModulation() { return modulation; }
+    const Panner& getPanner() const { return panner; }
     
     juce::AudioProcessorValueTreeState apvts;
     juce::AudioBuffer<float> sharedBuffer;
@@ -76,8 +76,7 @@ public:
 
 private:
     Panner panner;
-    PitchDetectionThread pitchThread;
-    Modulation modulation;
+//    PitchDetectionThread pitchThread;
     
     juce::AudioProcessorValueTreeState::ParameterLayout createParameterLayout();
     

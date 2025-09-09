@@ -6,7 +6,7 @@ PanCakeAudioProcessorEditor::PanCakeAudioProcessorEditor (PanCakeAudioProcessor&
     AudioProcessorEditor (&p),
     audioProcessor (p),
     basePanel(audioProcessor.apvts),
-    plot(audioProcessor, p.getModulation())
+    plot(p)
 {
     addAndMakeVisible(basePanel);
     addAndMakeVisible(plot);

@@ -21,11 +21,19 @@ public:
         Beat_Synced
     };
     
+    void updatePhaseState(float hertzRate,
+                          double duration,
+                          double sampleRate,
+                          const juce::AudioPlayHead::PositionInfo& posInfo);
     void advance();
+    
     void setPhaseIncrement(float increment) { phaseIncrement = increment; }
+    void setPhase(float phase);
+    void setModType(Modes mode) { modType = mode; }
+    
     float getPhase() const { return phase; }
     Modes getModType() const { return modType; }
-    void setModType(Modes mode) { modType = mode; }
+    
     
     static float triangle(float phase);
     
@@ -44,16 +52,16 @@ public:
         triangle
     };
     
-    Panner(Modulation& mod);
     void prepare(juce::dsp::ProcessSpec& spec);
     void process(juce::AudioBuffer<float>& buffer);
     void update(const juce::AudioProcessorValueTreeState& apvts,
                 const juce::AudioPlayHead::PositionInfo& posInfo);
     
+    const Modulation& getModulation() const { return mod; }
+    
 private:
     float mix = 1.0;
     waveType wave = waveType::sin;
-    float hertzRate = 0.0;
     double sampleRate = 44100.0;
     
     std::array<double, 18> noteDurations = {
@@ -63,7 +71,7 @@ private:
         1.0/32, 1.0/64, 1.0/128
     };
     
-    Modulation &mod;
+    Modulation mod;
     
     float applyWave(waveType wave, float phase);
 };

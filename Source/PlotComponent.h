@@ -7,7 +7,7 @@
 class PlotComponent : public juce::Component, private juce::Timer
 {
 public:
-    PlotComponent(PanCakeAudioProcessor& p, Modulation& mod);
+    PlotComponent(PanCakeAudioProcessor& p);
     ~PlotComponent() override;
 
     void paint (juce::Graphics&) override;
@@ -25,7 +25,7 @@ private:
     void setupWaveButton(juce::Button& button, juce::AudioParameterChoice* waveParam, Panner::waveType type);
     
     PanCakeAudioProcessor& audioProcessor;
-    Modulation &mod;
+    const Modulation &mod;
     
     juce::DrawableButton sinButton;
     juce::DrawableButton triangleButton;

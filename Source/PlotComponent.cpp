@@ -4,9 +4,9 @@
 #include "BaseColours.h"
 
 //==============================================================================
-PlotComponent::PlotComponent(PanCakeAudioProcessor& p, Modulation& mod) :
+PlotComponent::PlotComponent(PanCakeAudioProcessor& p) :
     audioProcessor(p),
-    mod(mod),
+    mod(p.getPanner().getModulation()),
     sinButton("Sin", juce::DrawableButton::ImageFitted),
     triangleButton("Triangle", juce::DrawableButton::ImageFitted)
 {
