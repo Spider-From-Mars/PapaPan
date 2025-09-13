@@ -77,7 +77,6 @@ private:
     float mix = 1.0;
     waveType wave = waveType::sin;
     double sampleRate = 44100.0;
-    bool wasPlaying = false;
     
     std::array<double, 18> noteDurations = {
         32.0, 16.0, 8.0, 4.0,

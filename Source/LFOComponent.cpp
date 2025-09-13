@@ -7,7 +7,7 @@ LFOComponent::LFOComponent(juce::AudioProcessorValueTreeState& apvts) :
 {
     juce::AudioParameterChoice* mode = dynamic_cast<juce::AudioParameterChoice*>(apvts.getParameter("MODE"));
     modeSelector.addItemList(mode->choices, 2);
-//    modeSelector.addSeparator();
+    modeSelector.addSeparator();
     
     juce::AudioParameterChoice* duration = dynamic_cast<juce::AudioParameterChoice*>(apvts.getParameter("DURATION"));
     juce::StringArray durations = duration->choices;
