@@ -5,58 +5,118 @@ void Modulation::updatePhaseState(float hertzRate,
                                   double sampleRate,
                                   const juce::AudioPlayHead::PositionInfo& posInfo)
 {
-    constexpr float twoPI = juce::MathConstants<float>::twoPi;
-    
     switch (modType) {
         case Modulation::Modes::Hertz_Retrig:
         {
-            setPhaseIncrement(twoPI * hertzRate / sampleRate);
+            hertzRetrigProcess(hertzRate, sampleRate);
             break;
         }
             
         case Modulation::Modes::Beat_Retrig:
         {
-            auto bpm = posInfo.getBpm().orFallback(120.f);
-            float beatDuration = (bpm / 60) * duration;
-            hertzRate = 1.0 / beatDuration;
-            
-            setPhaseIncrement(twoPI * hertzRate / sampleRate);
+            beatRetrigProcess(duration, posInfo.getBpm().orFallback(120.f), sampleRate);
             break;
         }
             
         case Modulation::Modes::Hertz_Synced:
         {
-            const double panPeriodSeconds = 1.0 / hertzRate;
-            const double currentTime = *posInfo.getTimeInSeconds();
-            
-            setPhase(twoPI * std::fmod(currentTime, panPeriodSeconds) / panPeriodSeconds);
+            hertzSyncedProcess(hertzRate, sampleRate, posInfo);
             break;
         }
             
         case Modulation::Modes::Beat_Synced:
         {
-            auto ppqPosition = posInfo.getPpqPosition().orFallback(0);
-            auto cycleLength = duration * 4.0;
-            
-            setPhase(twoPI * std::fmod(ppqPosition, cycleLength) / cycleLength);
+            beatSyncedProcess(duration, sampleRate, posInfo);
             break;
         }
     }
 }
 
+bool Modulation::needResetPhase(const juce::AudioPlayHead::PositionInfo &posInfo)
+{
+    bool resetPhase = false;
+    auto ppqPosition = posInfo.getPpqPosition().orFallback(0);
+    
+    if (posInfo.getIsPlaying() != lastPosInfo.wasPlaying)
+    {
+        if (posInfo.getIsPlaying())
+        {
+            resetPhase = true;
+        }
+        lastPosInfo.wasPlaying = posInfo.getIsPlaying();
+    }
+    
+    else if (posInfo.getIsPlaying())
+    {
+        if (std::abs(ppqPosition - lastPosInfo.ppqPosition) > 0.05)
+        {
+            resetPhase = true;
+        }
+        lastPosInfo.ppqPosition = ppqPosition;
+    }
+    
+    return resetPhase;
+}
+
+void Modulation::hertzRetrigProcess(float hertzRate, double sampleRate)
+{
+    setPhaseIncrement(twoPI * hertzRate / sampleRate);
+}
+
+void Modulation::beatRetrigProcess(double duration, double bpm, double sampleRate)
+{
+    float beatDuration = (bpm / 60) * duration;
+    auto hertzRate = 1.0 / beatDuration;
+    
+    setPhaseIncrement(twoPI * hertzRate / sampleRate);
+}
+
+void Modulation::hertzSyncedProcess(float hertzRate,
+                                    double sampleRate,
+                                    const juce::AudioPlayHead::PositionInfo &posInfo)
+{
+    if (needResetPhase(posInfo))
+    {
+        auto currentTime = posInfo.getTimeInSeconds().orFallback(0);
+        auto periodInSeconds = 1.0 / hertzRate;
+        
+        setPhase(twoPI * std::fmod(currentTime, periodInSeconds) / periodInSeconds);
+    }
+    
+    setPhaseIncrement(twoPI * hertzRate / sampleRate);
+}
+
+void Modulation::beatSyncedProcess(double duration,
+                                   double sampleRate,
+                                   const juce::AudioPlayHead::PositionInfo &posInfo)
+{
+    if (needResetPhase(posInfo))
+    {
+        auto ppqPosition = posInfo.getPpqPosition().orFallback(0);
+        auto cycleLength = duration * 4.0;
+        
+        setPhase(twoPI * std::fmod(ppqPosition, cycleLength) / cycleLength);
+    }
+    
+    float beatDuration = (posInfo.getBpm().orFallback(120.f) / 60) * duration;
+    auto hertzRate = 1.0 / beatDuration;
+    
+    setPhaseIncrement(twoPI * hertzRate / sampleRate);
+}
+
 void Modulation::advance()
 {
     phase += phaseIncrement;
-    if (phase >= juce::MathConstants<float>::twoPi)
-        phase -= juce::MathConstants<float>::twoPi;
+    if (phase >= twoPI)
+        phase -= twoPI;
 }
 
 void Modulation::setPhase(float newPhase)
 {
-    phase = std::fmod(newPhase, juce::MathConstants<float>::twoPi);
+    phase = std::fmod(newPhase, twoPI);
     
     if (phase < 0)
-        phase += juce::MathConstants<float>::twoPi;
+        phase += twoPI;
 }
 
 float Modulation::triangle(float phase)
@@ -109,9 +169,7 @@ void Panner::process(juce::AudioBuffer<float>& buffer)
         
         float pan = 0.5 + 0.5 * applyWave(wave, mod.getPhase());
         
-        if (mod.getModType() == Modulation::Modes::Beat_Retrig or
-            mod.getModType() == Modulation::Modes::Hertz_Retrig)
-            mod.advance();
+        mod.advance();
         
         float wetLeft = dryLeft * std::cos(pan * juce::MathConstants<float>::halfPi) * GAIN;
         float wetRight = dryRight * std::sin(pan * juce::MathConstants<float>::halfPi) * GAIN;

@@ -40,7 +40,21 @@ public:
 private:
     float phase = 0.0;
     float phaseIncrement = 0.0;
+    const float twoPI = juce::MathConstants<float>::twoPi;
     Modes modType;
+    
+    struct
+    {
+        bool wasPlaying = false;
+        double ppqPosition = 0;
+    } lastPosInfo;
+    
+    bool needResetPhase(const juce::AudioPlayHead::PositionInfo& posInfo);
+    
+    void hertzRetrigProcess(float hertzRate, double sampleRate);
+    void beatRetrigProcess(double duration, double bpm, double sampleRate);
+    void hertzSyncedProcess(float hertzRate, double sampleRate, const juce::AudioPlayHead::PositionInfo &posInfo);
+    void beatSyncedProcess(double duration, double sampleRate, const juce::AudioPlayHead::PositionInfo &posInfo);
 };
 
 class Panner {
@@ -63,6 +77,7 @@ private:
     float mix = 1.0;
     waveType wave = waveType::sin;
     double sampleRate = 44100.0;
+    bool wasPlaying = false;
     
     std::array<double, 18> noteDurations = {
         32.0, 16.0, 8.0, 4.0,
