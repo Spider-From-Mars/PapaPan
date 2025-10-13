@@ -13,28 +13,15 @@ It works in VST3, AU, and Standalone formats and lets you move sound smoothly be
 ---
 
 🧭 Modulation Modes
-* **Hertz Retrig**.
+* **Hertz Retrig.**: Pans the signal at a fixed frequency (Hz). The phase resets every time playback starts.
 
-Pans the signal at a fixed frequency (Hz).
-The phase resets every time playback starts.
+* **Beat Retrig.**: Panning speed follows the project tempo (BPM) and a chosen musical duration. The phase resets on playback start.
 
-* **Beat Retrig.**
+* **Hertz Synced**: Like Hertz Retrig., but the phase doesn’t reset — it continues smoothly from the current time, keeping motion continuous.
 
-Panning speed follows the project tempo (BPM) and a chosen musical duration.
-The phase resets on playback start.
+* **Beat Synced**: Tempo-synchronized panning where phase is recalculated based on the DAW playhead position. When the play cursor is moved, the panning stays in sync with the beat.
 
-* **Hertz Synced**
-
-Like Hertz Retrig., but the phase doesn’t reset — it continues smoothly from the current time, keeping motion continuous.
-
-* **Beat Synced**
-
-Tempo-synchronized panning where phase is recalculated based on the DAW playhead position.
-When the play cursor is moved, the panning stays in sync with the beat.
-
-* **Pitch → Rate**
-
-The panning rate depends on the detected pitch (F0) of the input signal — higher notes move faster across the stereo field.
+* **Pitch → Rate**: The panning rate depends on the detected pitch (F0) of the input signal — higher notes move faster across the stereo field.
 
 ---
 
@@ -44,3 +31,8 @@ The panning rate depends on the detected pitch (F0) of the input signal — high
 * Sample-accurate modulation
 * Works in Reaper, Ableton Live, Logic Pro, etc.
 * CPU-efficient and designed for real-time processing
+
+
+<p align="center">
+  <img src="Images/screen.png" alt="PapaPan UI" width="600" align="center">
+</p>
