@@ -1,10 +1,65 @@
-.DS_Store
-Builds
 Resources
 Proj
-JuceLibraryCode
-Master.png
 DebugScheme.filtergraph
-MidiComponent.cpp
-MidiComponent.h
-Pan.png
+
+# JUCE auto-generated stuff
+/JuceLibraryCode/
+/Builds/
+/cmake-build-*/
+
+# Binary data and build outputs
+BinaryData.*
+*.vst3
+*.component
+*.dll
+*.exe
+*.app
+*.so
+*.a
+*.lib
+*.obj
+*.o
+*.pdb
+*.dSYM/
+
+# IDE / OS
+.idea/
+.vscode/
+.vs/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+*.xcworkspace/
+*.xcodeproj/xcuserdata/
+.DS_Store
+Thumbs.db
+
+# Logs, caches, temp files
+*.log
+*.tmp
+*.cache
+*.DS_Store
+
+# Audio test files (optional)
+*.wav
+*.aiff
+*.mp3
+
+# CMake
+CMakeFiles/
+CMakeCache.txt
+Makefile
+cmake_install.cmake
+compile_commands.json
+
+# macOS metadata
+.AppleDouble
+.LSOverride
+
+# Backup files
+*~
+*.bak
+*.orig
+*.swp
+

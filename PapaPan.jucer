@@ -25,9 +25,6 @@
               file="Source/MasterComponent.cpp"/>
         <FILE id="OS6uxJ" name="MasterComponent.h" compile="0" resource="0"
               file="Source/MasterComponent.h"/>
-        <FILE id="LSxxQG" name="MidiComponent.cpp" compile="1" resource="0"
-              file="Source/MidiComponent.cpp"/>
-        <FILE id="LMeQM6" name="MidiComponent.h" compile="0" resource="0" file="Source/MidiComponent.h"/>
         <FILE id="Y5lLJP" name="SliderComponent.cpp" compile="1" resource="0"
               file="Source/SliderComponent.cpp"/>
         <FILE id="PLDHMr" name="SliderComponent.h" compile="0" resource="0"
