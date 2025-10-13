@@ -1,6 +1,9 @@
 #pragma once
 #include <JuceHeader.h>
 
+#include "RingBuffer.h"
+#include "YinFFT.h"
+
 enum NoteDuration
 {
     Half,
@@ -18,14 +21,16 @@ public:
         Hertz_Retrig,
         Beat_Retrig,
         Hertz_Synced,
-        Beat_Synced
+        Beat_Synced,
+        Pitch_To_Rate
     };
     
-    void updatePhaseState(float hertzRate,
-                          double duration,
-                          double sampleRate,
-                          const juce::AudioPlayHead::PositionInfo& posInfo);
     void advance();
+    
+    void hertzRetrigProcess(float hertzRate, double sampleRate);
+    void beatRetrigProcess(double duration, double bpm, double sampleRate);
+    void hertzSyncedProcess(float hertzRate, double sampleRate, const juce::AudioPlayHead::PositionInfo &posInfo);
+    void beatSyncedProcess(double duration, double sampleRate, const juce::AudioPlayHead::PositionInfo &posInfo);
     
     void setPhaseIncrement(float increment) { phaseIncrement = increment; }
     void setPhase(float phase);
@@ -50,11 +55,6 @@ private:
     } lastPosInfo;
     
     bool needResetPhase(const juce::AudioPlayHead::PositionInfo& posInfo);
-    
-    void hertzRetrigProcess(float hertzRate, double sampleRate);
-    void beatRetrigProcess(double duration, double bpm, double sampleRate);
-    void hertzSyncedProcess(float hertzRate, double sampleRate, const juce::AudioPlayHead::PositionInfo &posInfo);
-    void beatSyncedProcess(double duration, double sampleRate, const juce::AudioPlayHead::PositionInfo &posInfo);
 };
 
 class Panner {
@@ -69,7 +69,8 @@ public:
     void prepare(juce::dsp::ProcessSpec& spec);
     void process(juce::AudioBuffer<float>& buffer);
     void update(const juce::AudioProcessorValueTreeState& apvts,
-                const juce::AudioPlayHead::PositionInfo& posInfo);
+                const juce::AudioPlayHead::PositionInfo& posInfo,
+                float f0);
     
     const Modulation& getModulation() const { return mod; }
     
@@ -86,6 +87,7 @@ private:
     };
     
     Modulation mod;
+    
     
     float applyWave(waveType wave, float phase);
 };

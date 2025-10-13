@@ -1,30 +1,13 @@
 #pragma once
 
 #include <JuceHeader.h>
+
 #include "Panner.h"
-#include "PitchDetector.h"
+#include "YinFFT.h"
+#include "RingBuffer.h"
+#include "PitchThread.h"
 
-class PitchDetectionThread : juce::Thread
-{
-public:
-    PitchDetectionThread() : juce::Thread("PitchDetector") {};
-    ~PitchDetectionThread();
-    
-    void prepare(juce::dsp::ProcessSpec& spec);
-    
-    void run() override;
-    void setBuffer(const juce::AudioBuffer<float>& buffer) { bufferToProcess.makeCopyOf(buffer); }
-    
-    float getPitch() const { return detectedPitch.load(std::memory_order_relaxed); }
-    
-private:
-    PitchDetector pitchDetector;
-    
-    juce::AudioBuffer<float> bufferToProcess;
-    std::atomic<float> detectedPitch = 0;
-};
 
-//==============================================================================
 /**
 */
 class PanCakeAudioProcessor : public juce::AudioProcessor
@@ -72,13 +55,15 @@ public:
     juce::AudioProcessorValueTreeState apvts;
     juce::AudioBuffer<float> sharedBuffer;
     juce::CriticalSection bufferLock;
-    float pitch = 0;
 
 private:
+    YinFFT pitchDetector;
+    RingBuffer ringBuffer;
+    PitchDetectionThread pitchThread;
     Panner panner;
-//    PitchDetectionThread pitchThread;
     
     juce::AudioProcessorValueTreeState::ParameterLayout createParameterLayout();
+    void fillRingBuffer(juce::AudioBuffer<float>& buffer);
     
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (PanCakeAudioProcessor)

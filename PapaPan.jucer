@@ -33,6 +33,14 @@
         <FILE id="PLDHMr" name="SliderComponent.h" compile="0" resource="0"
               file="Source/SliderComponent.h"/>
       </GROUP>
+      <GROUP id="{FA1AEEF2-3D1C-4399-A49F-EAADC6A627E7}" name="Pitch Detection">
+        <FILE id="gK8WUf" name="PitchThread.cpp" compile="1" resource="0" file="Source/PitchThread.cpp"/>
+        <FILE id="aacrff" name="PitchThread.h" compile="0" resource="0" file="Source/PitchThread.h"/>
+        <FILE id="qj0bnO" name="RingBuffer.cpp" compile="1" resource="0" file="Source/RingBuffer.cpp"/>
+        <FILE id="PxZOEk" name="RingBuffer.h" compile="0" resource="0" file="Source/RingBuffer.h"/>
+        <FILE id="RlcpwL" name="YinFFT.cpp" compile="1" resource="0" file="Source/YinFFT.cpp"/>
+        <FILE id="PFghou" name="YinFFT.h" compile="0" resource="0" file="Source/YinFFT.h"/>
+      </GROUP>
       <FILE id="ONivRy" name="BasePanel.cpp" compile="1" resource="0" file="Source/BasePanel.cpp"/>
       <FILE id="H3DuGR" name="BasePanel.h" compile="0" resource="0" file="Source/BasePanel.h"/>
       <FILE id="yg2dHJ" name="BaseColours.h" compile="0" resource="0" file="Source/BaseColours.h"/>
@@ -46,9 +54,6 @@
       <FILE id="h2Tuxa" name="Panner.cpp" compile="1" resource="0" file="Source/Panner.cpp"
             xcodeResource="1"/>
       <FILE id="Uq5aGt" name="Panner.h" compile="0" resource="0" file="Source/Panner.h"/>
-      <FILE id="EbxiAv" name="PitchDetector.cpp" compile="1" resource="0"
-            file="Source/PitchDetector.cpp"/>
-      <FILE id="bk5L2f" name="PitchDetector.h" compile="0" resource="0" file="Source/PitchDetector.h"/>
       <FILE id="GoVJKT" name="Comic Sans MS Bold.ttf" compile="0" resource="1"
             file="Resources/Comic Sans MS Bold.ttf"/>
       <FILE id="hkSgOj" name="Utils.cpp" compile="1" resource="0" file="Source/Utils.cpp"/>

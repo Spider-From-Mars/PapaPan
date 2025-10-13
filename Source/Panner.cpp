@@ -1,37 +1,5 @@
 #include "Panner.h"
 
-void Modulation::updatePhaseState(float hertzRate,
-                                  double duration,
-                                  double sampleRate,
-                                  const juce::AudioPlayHead::PositionInfo& posInfo)
-{
-    switch (modType) {
-        case Modulation::Modes::Hertz_Retrig:
-        {
-            hertzRetrigProcess(hertzRate, sampleRate);
-            break;
-        }
-            
-        case Modulation::Modes::Beat_Retrig:
-        {
-            beatRetrigProcess(duration, posInfo.getBpm().orFallback(120.f), sampleRate);
-            break;
-        }
-            
-        case Modulation::Modes::Hertz_Synced:
-        {
-            hertzSyncedProcess(hertzRate, sampleRate, posInfo);
-            break;
-        }
-            
-        case Modulation::Modes::Beat_Synced:
-        {
-            beatSyncedProcess(duration, sampleRate, posInfo);
-            break;
-        }
-    }
-}
-
 bool Modulation::needResetPhase(const juce::AudioPlayHead::PositionInfo &posInfo)
 {
     bool resetPhase = false;
@@ -128,6 +96,7 @@ float Modulation::triangle(float phase)
     return 1 - 4.0f * std::abs(phase - 0.5f);
 }
 
+
 void Panner::prepare(juce::dsp::ProcessSpec& spec)
 {
     jassert (spec.sampleRate > 0);
@@ -136,7 +105,8 @@ void Panner::prepare(juce::dsp::ProcessSpec& spec)
     sampleRate = spec.sampleRate;
 }
 
-void Panner::update(const juce::AudioProcessorValueTreeState& apvts, const juce::AudioPlayHead::PositionInfo& posInfo)
+
+void Panner::update(const juce::AudioProcessorValueTreeState& apvts, const juce::AudioPlayHead::PositionInfo& posInfo, float f0)
 {
     mix = *apvts.getRawParameterValue("MIX") / 100.0;
     
@@ -147,11 +117,30 @@ void Panner::update(const juce::AudioProcessorValueTreeState& apvts, const juce:
     auto newMode = static_cast<Modulation::Modes>(mode);
     mod.setModType(newMode);
     
-    mod.updatePhaseState(*apvts.getRawParameterValue("HERTZRATE"),
-                         noteDurations[*apvts.getRawParameterValue("DURATION")],
-                         sampleRate,
-                         posInfo);
+    switch (mod.getModType())
+    {
+        case Modulation::Modes::Hertz_Retrig:
+            mod.hertzRetrigProcess(*apvts.getRawParameterValue("HERTZRATE"), sampleRate);
+            break;
+            
+        case Modulation::Modes::Pitch_To_Rate:
+            mod.hertzRetrigProcess(f0, sampleRate);
+            break;
+            
+        case Modulation::Modes::Beat_Retrig:
+            mod.beatRetrigProcess(noteDurations[*apvts.getRawParameterValue("DURATION")], posInfo.getBpm().orFallback(120.f), sampleRate);
+            break;
+            
+        case Modulation::Modes::Hertz_Synced:
+            mod.hertzSyncedProcess(*apvts.getRawParameterValue("HERTZRATE"), sampleRate, posInfo);
+            break;
+            
+        case Modulation::Modes::Beat_Synced:
+            mod.beatSyncedProcess(noteDurations[*apvts.getRawParameterValue("DURATION")], sampleRate, posInfo);
+            break;
+    }
 }
+
 
 void Panner::process(juce::AudioBuffer<float>& buffer)
 {
@@ -181,6 +170,7 @@ void Panner::process(juce::AudioBuffer<float>& buffer)
         right[i] = (dryRight * (1-mix) + wetRight * mix) * smoothGain;
     }
 }
+
 
 float Panner::applyWave(waveType wave, float phase)
 {

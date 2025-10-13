@@ -12,7 +12,10 @@ PanCakeAudioProcessor::PanCakeAudioProcessor()
                        .withOutput ("Output", juce::AudioChannelSet::stereo(), true)
                      #endif
                        ),
-        apvts(*this, nullptr, "Parameters", createParameterLayout())
+        apvts(*this, nullptr, "Parameters", createParameterLayout()),
+        pitchDetector(3 * 2048, 512),
+        ringBuffer(pitchDetector.getFrameSize() * 4),
+        pitchThread(pitchDetector, ringBuffer)
 #endif
 {
 }
@@ -92,7 +95,8 @@ void PanCakeAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBloc
     spec.sampleRate = sampleRate;
     spec.numChannels = getTotalNumOutputChannels();
     
-//    pitchThread.prepare(spec);
+    pitchThread.prepare();
+    pitchDetector.prepare(sampleRate, 0.15);
 }
 
 void PanCakeAudioProcessor::releaseResources()
@@ -136,17 +140,16 @@ void PanCakeAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce
     for (auto i = totalNumInputChannels; i < totalNumOutputChannels; ++i)
         buffer.clear (i, 0, buffer.getNumSamples());
     
-//    pitchThread.setBuffer(buffer);
-//    pitch = pitchThread.getPitch();
-    
     const juce::ScopedLock sl(bufferLock);
     sharedBuffer.makeCopyOf(buffer);
+    
+    fillRingBuffer(buffer);
     
     if (auto* playHead = getPlayHead())
     {
         if (auto pos = playHead->getPosition())
         {
-            panner.update(apvts, *pos);
+            panner.update(apvts, *pos, pitchThread.getPitch());
             panner.process(buffer);
         }
     }
@@ -210,7 +213,7 @@ juce::AudioProcessorValueTreeState::ParameterLayout PanCakeAudioProcessor::creat
                                                            juce::NormalisableRange<float>(0.f, 100.f, 0.01f, 0.4f),
                                                            0));
     
-    juce::StringArray modeChoices = {"Hertz Retrig.", "Beat Retrig.", "Hertz Synced", "Beat Synced"};
+    juce::StringArray modeChoices = {"Hertz Retrig.", "Beat Retrig.", "Hertz Synced", "Beat Synced", "Pitch -> Rate"};
     layout.add(std::make_unique<juce::AudioParameterChoice>(ParameterID("MODE", 1),
                                                             "Mode",
                                                             modeChoices,
@@ -230,31 +233,21 @@ juce::AudioProcessorValueTreeState::ParameterLayout PanCakeAudioProcessor::creat
     return layout;
 }
 
-// ============== PitchDetectionThread ==============
-
-PitchDetectionThread::~PitchDetectionThread()
+void PanCakeAudioProcessor::fillRingBuffer(juce::AudioBuffer<float> &buffer)
 {
-    signalThreadShouldExit();
-    stopThread(1000);
-}
-
-void PitchDetectionThread::prepare(juce::dsp::ProcessSpec &spec)
-{
-    pitchDetector.prepare(spec);
-    startThread();
-}
-
-void PitchDetectionThread::run()
-{
-    while (!threadShouldExit()) {
-        if (bufferToProcess.getNumSamples() > 0)
+    const int numSamples = buffer.getNumSamples();
+    if (buffer.getNumChannels() > 1)
+    {
+        std::vector<float> mono(numSamples);
+        
+        for (int i = 0; i < numSamples; i++)
         {
-            float pitch = pitchDetector.detectPitch(bufferToProcess.getReadPointer(0),
-                                                    20,
-                                                    bufferToProcess.getNumSamples() / 2);
-            detectedPitch.store(pitch, std::memory_order_relaxed);
-            bufferToProcess.clear();
+            mono[i] = (buffer.getReadPointer(0)[i] + buffer.getReadPointer(1)[i]) * 0.5;
         }
-        wait(50);
+        
+        ringBuffer.push(mono.data(), numSamples);
     }
+    else
+        ringBuffer.push(buffer.getReadPointer(0), numSamples);
 }
+
