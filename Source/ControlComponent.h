@@ -21,8 +21,8 @@ private:
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ControlComponent)
     
     juce::Typeface::Ptr typeface = juce::Typeface::createSystemTypefaceFor(
-                                                                           BinaryData::Comic_Sans_MS_Bold_ttf,
-                                                                           BinaryData::Comic_Sans_MS_Bold_ttfSize
+                                                                           BinaryData::ComicNeueBold_ttf,
+                                                                           BinaryData::ComicNeueBold_ttfSize
                                                                            );
     
     const int rotatedLabelHeight = 25;
@@ -67,8 +67,8 @@ private:
     void setPopupMenuColors();
     
     juce::Typeface::Ptr typeface = juce::Typeface::createSystemTypefaceFor(
-                                                                           BinaryData::Comic_Sans_MS_Bold_ttf,
-                                                                           BinaryData::Comic_Sans_MS_Bold_ttfSize
+                                                                           BinaryData::ComicNeueBold_ttf,
+                                                                           BinaryData::ComicNeueBold_ttfSize
                                                                            );
 };
 

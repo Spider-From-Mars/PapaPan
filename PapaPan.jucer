@@ -7,6 +7,8 @@
     <GROUP id="{D123069D-D6DE-E47E-F810-D8810F3C870B}" name="Source">
       <FILE id="TUxrSr" name="triangleWave.svg" compile="0" resource="1"
             file="Resources/triangleWave.svg"/>
+      <FILE id="qz6BxJ" name="ComicNeue-Bold.ttf" compile="0" resource="1"
+            file="Resources/ComicNeue-Bold.ttf"/>
       <FILE id="VBq2qC" name="sinWave.svg" compile="0" resource="1" file="Resources/sinWave.svg"/>
       <GROUP id="{7A21C192-837B-BC73-0FF0-536D4F941226}" name="Plot">
         <FILE id="Zgphdd" name="PlotComponent.cpp" compile="1" resource="0"
@@ -51,8 +53,6 @@
       <FILE id="h2Tuxa" name="Panner.cpp" compile="1" resource="0" file="Source/Panner.cpp"
             xcodeResource="1"/>
       <FILE id="Uq5aGt" name="Panner.h" compile="0" resource="0" file="Source/Panner.h"/>
-      <FILE id="GoVJKT" name="Comic Sans MS Bold.ttf" compile="0" resource="1"
-            file="Resources/Comic Sans MS Bold.ttf"/>
       <FILE id="hkSgOj" name="Utils.cpp" compile="1" resource="0" file="Source/Utils.cpp"/>
       <FILE id="cx5D0q" name="Utils.h" compile="0" resource="0" file="Source/Utils.h"/>
     </GROUP>

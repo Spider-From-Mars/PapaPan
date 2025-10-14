@@ -13,7 +13,6 @@ BasePanel::BasePanel(juce::AudioProcessorValueTreeState& apvts) :
     addAndMakeVisible(companyLabel);
     
     addAndMakeVisible(lfoComponent);
-//    addAndMakeVisible(midiComponent);
     addAndMakeVisible(masterComponent);
 }
 
@@ -58,7 +57,6 @@ void BasePanel::resized()
     const int pad = 20;
     
     lfoComponent.setBounds(x, 10, roundedRectWidth, 100);
-//    midiComponent.setBounds(x, lfoComponent.getBottom() + pad, roundedRectWidth, 65);
     masterComponent.setBounds(
                               x,
                               lfoComponent.getBottom() + pad,

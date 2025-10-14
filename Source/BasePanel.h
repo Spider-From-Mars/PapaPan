@@ -21,15 +21,14 @@ private:
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (BasePanel)
     
     juce::Typeface::Ptr typeface = juce::Typeface::createSystemTypefaceFor(
-                                                                           BinaryData::Comic_Sans_MS_Bold_ttf,
-                                                                           BinaryData::Comic_Sans_MS_Bold_ttfSize
+                                                                           BinaryData::ComicNeueBold_ttf,
+                                                                           BinaryData::ComicNeueBold_ttfSize
                                                                            );
     
     juce::Label titleLabel {"Title Label", "PAPA PAN"};
     juce::Label companyLabel {"Company Name", "Hamlet, inc."};
     
     LFOComponent lfoComponent;
-//    MidiComponent midiComponent;
     MasterComponent masterComponent;
     
     void setMainStyleLabel(juce::Label& label, float fontSize);
