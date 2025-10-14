@@ -34,5 +34,5 @@ It works in VST3, AU, and Standalone formats and lets you move sound smoothly be
 
 
 <p align="center">
-  <img src="Images/screen.png" alt="PapaPan UI" width="600" align="center">
+  <img src="Images/screenEx.png" alt="PapaPan UI" width="600" align="center">
 </p>
