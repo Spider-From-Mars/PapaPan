@@ -62,3 +62,5 @@ compile_commands.json
 *.orig
 *.swp
 
+# clang-format
+.clang-format
