@@ -53,8 +53,6 @@
       <FILE id="h2Tuxa" name="Panner.cpp" compile="1" resource="0" file="Source/Panner.cpp"
             xcodeResource="1"/>
       <FILE id="Uq5aGt" name="Panner.h" compile="0" resource="0" file="Source/Panner.h"/>
-      <FILE id="hkSgOj" name="Utils.cpp" compile="1" resource="0" file="Source/Utils.cpp"/>
-      <FILE id="cx5D0q" name="Utils.h" compile="0" resource="0" file="Source/Utils.h"/>
     </GROUP>
   </MAINGROUP>
   <MODULES>

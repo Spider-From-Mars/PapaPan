@@ -142,7 +142,25 @@ void LookAndFeel::drawRotarySliderLabel(juce::Graphics& g, juce::Rectangle<float
     
     g.setColour(BaseColours::white);
     
-    const float maxLineWidth = getMaxLineWidth(displayString, font);
+    auto getMaxLineWidth = [&font](const juce::String& text)
+    {
+        juce::StringArray lines;
+        lines.addLines(text);
+        float maxWidth = 0;
+        
+        for (auto line : lines)
+        {
+            float lineWidth = juce::GlyphArrangement::getStringWidth(font, line);
+            if (lineWidth > maxWidth)
+            {
+                maxWidth = lineWidth;
+            }
+        }
+        
+        return maxWidth;
+    };
+    
+    const float maxLineWidth = getMaxLineWidth(displayString);
     juce::GlyphArrangement ga;
     ga.addJustifiedText(
                         font,

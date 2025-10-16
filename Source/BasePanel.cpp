@@ -1,6 +1,5 @@
 #include <JuceHeader.h>
 #include "BasePanel.h"
-#include "Utils.h"
 
 //==============================================================================
 BasePanel::BasePanel(juce::AudioProcessorValueTreeState& apvts) :
