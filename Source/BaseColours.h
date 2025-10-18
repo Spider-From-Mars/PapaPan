@@ -1,5 +1,7 @@
 #pragma once
 
+#include <JuceHeader.h>
+
 namespace BaseColours {
     const juce::Colour basePink {255, 213, 239};
     const juce::Colour darkPink {231, 166, 206};
