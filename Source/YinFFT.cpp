@@ -1,18 +1,13 @@
-#include <cmath>
-
 #include "YinFFT.h"
 
-YinFFT::YinFFT(int frameSize, int hopSize) :
-    frameSize(frameSize),
-    hopSize(hopSize),
-    fftSize(1 << getFftOrder(frameSize)),
-    fft(getFftOrder(frameSize))
+YinFFT::YinFFT(int frameSize, int hopSize)
+    : frameSize(frameSize), hopSize(hopSize), fftSize(1 << getFftOrder(frameSize)),
+      fft(getFftOrder(frameSize))
 {
     fftBuffer.allocate(2 * fftSize, true);
     cmndValues.allocate(frameSize, true);
     cmndValues[0] = 1;
 }
-
 
 void YinFFT::prepare(double sampleRate_, float threshold_, float fMin_, float fMax_)
 {
@@ -20,40 +15,36 @@ void YinFFT::prepare(double sampleRate_, float threshold_, float fMin_, float fM
     threshold = threshold_;
     fMin = fMin_;
     fMax = fMax_;
-    
+
     juce::dsp::ProcessSpec spec;
     spec.sampleRate = sampleRate_;
     spec.maximumBlockSize = frameSize;
     spec.numChannels = 1;
-    
-    auto setBand = [sampleRate_](juce::dsp::IIR::Filter<float>& filter,
-                                 float fLow,
-                                 float fHigh)
+
+    auto setBand = [sampleRate_](juce::dsp::IIR::Filter<float> &filter, float fLow, float fHigh)
     {
         auto center = 0.5 * (fLow + fHigh);
         auto bandWidth = std::abs(fHigh - fLow);
         auto quality = center / bandWidth;
-        
-        filter.coefficients = juce::dsp::IIR::Coefficients<float>::makeBandPass(sampleRate_,
-                                                                                center,
-                                                                                quality);
+
+        filter.coefficients =
+            juce::dsp::IIR::Coefficients<float>::makeBandPass(sampleRate_, center, quality);
     };
-    
+
     for (auto filter : filters)
     {
         filter->prepare(spec);
     }
-    
+
     setBand(lowPassFilter, 30, 250);
-    setBand(lowPassFilter, 200, 800);
-    setBand(lowPassFilter, 600, 3000);
+    setBand(midPassFilter, 200, 800);
+    setBand(highPassFilter, 600, 3000);
 }
 
-
-juce::Optional<float> YinFFT::getF0(RingBuffer& ringBuffer)
+juce::Optional<float> YinFFT::getF0(RingBuffer &ringBuffer)
 {
     std::vector<float> frame(frameSize);
-    
+
     if (ringBuffer.getFrame(frame, frameSize, hopSize))
     {
         for (auto filter : filters)
@@ -65,15 +56,14 @@ juce::Optional<float> YinFFT::getF0(RingBuffer& ringBuffer)
             filter->process(ctx);
 
             juce::Optional<float> f0 = calculateF0(tmp.getReadPointer(0));
-            
+
             if (f0)
                 return f0;
         }
     }
-    
+
     return std::nullopt;
 }
-
 
 void YinFFT::ACF(const float *frame)
 {
@@ -81,90 +71,98 @@ void YinFFT::ACF(const float *frame)
     {
         fftBuffer[i] = frame[i];
     }
-    
+
+    // Fast Fourier transform for real signals
     fft.performRealOnlyForwardTransform(fftBuffer.getData());
-    
+
     for (int i = 0; i <= fftSize / 2; i++)
     {
-        float re = fftBuffer[2*i];
-        float img = fftBuffer[2*i + 1];
-        
-        fftBuffer[2*i] = re * re + img * img;
-        fftBuffer[2*i + 1] = 0;
-    }
-    
-    fft.performRealOnlyInverseTransform(fftBuffer.getData());
-}
+        float re = fftBuffer[2 * i];
+        float img = fftBuffer[2 * i + 1];
 
+        fftBuffer[2 * i] = re * re + img * img;
+        fftBuffer[2 * i + 1] = 0;
+    }
+
+    // Inverse fast transform of an array, each element of which
+    // is multiplied by its conjugate complex number
+    fft.performRealOnlyInverseTransform(fftBuffer.getData());
+
+    // r=IFFT(∣FFT(x)∣^2) - autocorrelation via FFT
+    // Each FFT(x) is a complex number. For it, the modulus = sqrt(real^2 + img^2)
+    // But |a+bi|^2 = (a+bi)*(a-bi) = a^2 + b^2
+}
 
 void YinFFT::DF(const float *frame)
 {
+    // Difference function via autocorrelation
     ACF(frame);
-    
+
     // First frameSize values of fftBuffer is acf values
     float r0 = fftBuffer[0];
-    
+
     for (int i = 0; i < frameSize; i++)
     {
+        // d(tau) = 2 * (r(0) - r(tau))
+        // Array indices are essentially offsets (lag or tau).
+        // For each offset, we calculated the difference function
         fftBuffer[i] = 2 * (r0 - fftBuffer[i]);
     }
 }
 
-
 void YinFFT::CMND()
 {
     size_t runningSum = 0;
-    
+
     // First frameSize values of fftBuffer is diff values
     for (int tau = 1; tau < frameSize; tau++)
     {
         runningSum += fftBuffer[tau];
         cmndValues[tau] = fftBuffer[tau] / (runningSum / tau);
     }
-    
+
     std::fill(fftBuffer.getData(), fftBuffer.getData() + 2 * fftSize, 0.f);
 }
 
-
 float YinFFT::minInterpolation(int tau)
 {
-    if (1 < tau and tau < frameSize-1) {
-        float a = cmndValues[tau-1];
+    if (1 < tau and tau < frameSize - 1)
+    {
+        float a = cmndValues[tau - 1];
         float b = cmndValues[tau];
-        float c = cmndValues[tau+1];
-        
+        float c = cmndValues[tau + 1];
+
         auto denom = a - 2 * b + c;
         if (denom != 0)
             tau = tau + 0.5 * (a - c) / denom;
     }
-    
+
     return tau;
 }
 
-
-juce::Optional<float> YinFFT::calculateF0(const float* frame)
+juce::Optional<float> YinFFT::calculateF0(const float *frame)
 {
     DF(frame);
     CMND();
-    
+
     int discreteTau = 0;
     float candidate = 0;
-    
+
     for (; discreteTau < frameSize; discreteTau++)
     {
         candidate = cmndValues[discreteTau];
         if (candidate < threshold)
             break;
     }
-    
+
     if (candidate > threshold)
         return std::nullopt;
-    
+
     float tau = minInterpolation(discreteTau);
-    
+
     float f0 = sampleRate / tau;
     if (f0 < fMin or f0 > fMax)
         return std::nullopt;
-    
+
     return f0;
 }
