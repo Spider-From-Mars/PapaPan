@@ -75,7 +75,7 @@ void YinFFT::ACF(const float *frame)
     // Fast Fourier transform for real signals
     fft.performRealOnlyForwardTransform(fftBuffer.getData());
 
-    for (int i = 0; i <= fftSize / 2; i++)
+    for (int i = 0; i <= fftSize / 2; ++i)
     {
         float re = fftBuffer[2 * i];
         float img = fftBuffer[2 * i + 1];
@@ -101,7 +101,7 @@ void YinFFT::DF(const float *frame)
     // First frameSize values of fftBuffer is acf values
     float r0 = fftBuffer[0];
 
-    for (int i = 0; i < frameSize; i++)
+    for (int i = 0; i < frameSize; ++i)
     {
         // d(tau) = 2 * (r(0) - r(tau))
         // Array indices are essentially offsets (lag or tau).
@@ -115,7 +115,7 @@ void YinFFT::CMND()
     size_t runningSum = 0;
 
     // First frameSize values of fftBuffer is diff values
-    for (int tau = 1; tau < frameSize; tau++)
+    for (int tau = 1; tau < frameSize; ++tau)
     {
         runningSum += fftBuffer[tau];
         cmndValues[tau] = fftBuffer[tau] / (runningSum / tau);

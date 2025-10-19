@@ -9,5 +9,6 @@ namespace BaseColours {
     const juce::Colour white {255, 255, 255};
     const juce::Colour yellow {255, 222, 89};
     const juce::Colour baseLineColor {white.withAlpha(0.5f)};
+    const juce::Colour visualiserWaveColor {white.withAlpha(0.4f)};
     const juce::Colour subLineColor {white.withAlpha(0.3f)};
 }
