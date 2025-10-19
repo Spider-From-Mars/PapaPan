@@ -13,7 +13,8 @@ PanCakeAudioProcessor::PanCakeAudioProcessor()
 #endif
                          ),
       apvts(*this, nullptr, "Parameters", createParameterLayout()), pitchDetector(3 * 2048, 512),
-      ringBuffer(pitchDetector.getFrameSize() * 4), pitchThread(pitchDetector, ringBuffer)
+      ringBuffer(pitchDetector.getFrameSize() * 4), pitchThread(pitchDetector, ringBuffer),
+      mod(panner.getModulation())
 #endif
 {
 }
@@ -111,6 +112,9 @@ void PanCakeAudioProcessor::processBlock(juce::AudioBuffer<float> &buffer,
     sharedBuffer.makeCopyOf(buffer);
 
     fillRingBuffer(buffer);
+
+    if (mod.getModType() == Modulation::Modes::Pitch_To_Rate)
+        pitchThread.waitEvent.signal();
 
     if (auto *playHead = getPlayHead())
     {

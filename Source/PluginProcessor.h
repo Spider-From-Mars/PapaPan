@@ -59,6 +59,7 @@ class PanCakeAudioProcessor : public juce::AudioProcessor
     RingBuffer ringBuffer;
     PitchDetectionThread pitchThread;
     Panner panner;
+    const Modulation& mod;
 
     juce::AudioProcessorValueTreeState::ParameterLayout createParameterLayout();
     void fillRingBuffer(const juce::AudioBuffer<float> &buffer);

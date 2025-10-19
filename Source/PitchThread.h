@@ -14,7 +14,8 @@ class PitchDetectionThread : juce::Thread
 
     void run() override;
     float getPitch() const { return detectedPitch.load(std::memory_order_relaxed); }
-
+    juce::WaitableEvent waitEvent;
+    
   private:
     YinFFT &pitchDetector;
     RingBuffer &buffer;
