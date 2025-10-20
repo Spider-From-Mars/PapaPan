@@ -1,6 +1,7 @@
 #pragma once
 
 #include <JuceHeader.h>
+#include "RotarySlider.h"
 #include "ControlComponent.h"
 
 //==============================================================================

@@ -27,10 +27,9 @@
               file="Source/MasterComponent.cpp"/>
         <FILE id="OS6uxJ" name="MasterComponent.h" compile="0" resource="0"
               file="Source/MasterComponent.h"/>
-        <FILE id="Y5lLJP" name="SliderComponent.cpp" compile="1" resource="0"
-              file="Source/SliderComponent.cpp"/>
-        <FILE id="PLDHMr" name="SliderComponent.h" compile="0" resource="0"
-              file="Source/SliderComponent.h"/>
+        <FILE id="HNjDYt" name="RotarySlider.cpp" compile="1" resource="0"
+              file="Source/RotarySlider.cpp"/>
+        <FILE id="H577Vh" name="RotarySlider.h" compile="0" resource="0" file="Source/RotarySlider.h"/>
       </GROUP>
       <GROUP id="{FA1AEEF2-3D1C-4399-A49F-EAADC6A627E7}" name="Pitch Detection">
         <FILE id="gK8WUf" name="PitchThread.cpp" compile="1" resource="0" file="Source/PitchThread.cpp"/>

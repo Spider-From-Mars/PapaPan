@@ -48,7 +48,7 @@ void LFOComponent::paint(juce::Graphics& g)
 void LFOComponent::resized()
 {
     auto bounds = getLocalBounds();
-    auto activeArea = bounds.withTrimmedRight(getrotatedLabelHeight());
+    auto activeArea = bounds.withTrimmedRight(rotatedLabelHeight);
     const float sliderWidth = activeArea.getWidth() / 2 - 10;
     
     lfoSlider.setBounds(activeArea.removeFromRight(sliderWidth));
