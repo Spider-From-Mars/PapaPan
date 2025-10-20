@@ -1,25 +1,22 @@
 #pragma once
 
-#include <JuceHeader.h>
-#include "RotarySlider.h"
 #include "ControlComponent.h"
+#include "RotarySlider.h"
+#include <JuceHeader.h>
 
-//==============================================================================
-/*
-*/
-class MasterComponent  : public ControlComponent
+class MasterComponent : public ControlComponent
 {
-public:
-    MasterComponent(juce::AudioProcessorValueTreeState& apvts);
+  public:
+    MasterComponent(juce::AudioProcessorValueTreeState &apvts);
     ~MasterComponent() override;
 
-    void paint (juce::Graphics&) override;
+    void paint(juce::Graphics &) override;
     void resized() override;
 
-private:
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MasterComponent)
-    
+  private:
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(MasterComponent)
+
     RotarySliderWithLabels mixSlider;
-    
+
     std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> mixSliderAttachment;
 };

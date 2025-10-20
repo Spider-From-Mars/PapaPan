@@ -1,29 +1,30 @@
 #pragma once
 
-#include <JuceHeader.h>
-#include "RotarySlider.h"
 #include "ControlComponent.h"
+#include "RotarySlider.h"
+#include <JuceHeader.h>
 
-//==============================================================================
-/*
-*/
-class LFOComponent  : public ControlComponent
+
+class LFOComponent : public ControlComponent
 {
-public:
-    LFOComponent(juce::AudioProcessorValueTreeState& apvts);
+  public:
+    LFOComponent(juce::AudioProcessorValueTreeState &apvts);
     ~LFOComponent() override;
 
-    void paint (juce::Graphics&) override;
+    void paint(juce::Graphics &) override;
     void resized() override;
 
-private:
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (LFOComponent)
-    
+  private:
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(LFOComponent)
+
     RotarySliderWithLabels lfoSlider;
     DropdownMenu modeSelector;
     DropdownMenu durationSelector;
-    
+
     std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> lfoSliderAttachment;
     std::unique_ptr<juce::AudioProcessorValueTreeState::ComboBoxAttachment> modeSelectorAttachment;
-    std::unique_ptr<juce::AudioProcessorValueTreeState::ComboBoxAttachment> durationSelectorAttachment;
+    std::unique_ptr<juce::AudioProcessorValueTreeState::ComboBoxAttachment>
+        durationSelectorAttachment;
+    
+    void setSelectors(juce::AudioProcessorValueTreeState &apvts);
 };

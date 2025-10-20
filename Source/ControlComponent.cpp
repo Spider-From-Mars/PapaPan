@@ -1,5 +1,4 @@
 #include "ControlComponent.h"
-#include <JuceHeader.h>
 
 // ControlComponent
 //==============================================================================
