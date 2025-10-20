@@ -2,7 +2,7 @@
 
 <JUCERPROJECT id="ZGgLh4" name="PapaPan" projectType="audioplug" useAppConfig="0"
               addUsingNamespaceToJuceHeader="0" jucerFormatVersion="1" companyName="Hamlet inc."
-              pluginFormats="buildStandalone,buildVST3" pluginVST3Category="Modulation">
+              pluginFormats="buildVST3" pluginVST3Category="Modulation">
   <MAINGROUP id="huGugp" name="PapaPan">
     <GROUP id="{D123069D-D6DE-E47E-F810-D8810F3C870B}" name="Source">
       <FILE id="TUxrSr" name="triangleWave.svg" compile="0" resource="1"
